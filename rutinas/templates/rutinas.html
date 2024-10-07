@@ -1,0 +1,19 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rutinas</title>
+</head>
+<body>
+    <h1>Rutinas Disponibles</h1>
+    <ul>
+        {% for rutina in rutinas %}
+            <li>{{ rutina.nombre_rutina }}: {{ rutina.descripcion }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'index' %}">Regresar a la página principal</a>
+</body>
+</html>
+{% endblock%}

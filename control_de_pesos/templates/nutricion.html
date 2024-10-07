@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nutrición</title>
+</head>
+<body>
+    <h1>Información de Nutrición</h1>
+    <ul>
+        {% for comida in nutricion %}
+            <li>{{ comida.nombre_comida }} - Calorías: {{ comida.calorias }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'index' %}">Regresar a la página principal</a>
+</body>
+</html>from rutinas.models import Rutina
+Rutina.objects.create(nombre_rutina='Rutina de Fuerza', descripcion='Entrenamiento enfocado en el aumento de la fuerza a través de ejercicios compuestos.')
+Rutina.objects.create(nombre_rutina='Rutina de Hipertrofia', descripcion='Rutina diseñada para maximizar el crecimiento muscular.')
+Rutina.objects.create(nombre_rutina='Rutina de Resistencia', descripcion='Entrenamiento orientado a mejorar la resistencia muscular y cardiovascular.')
+Rutina.objects.create(nombre_rutina='Rutina de HIIT', descripcion='Combina ejercicios de alta intensidad con períodos de descanso para mejorar la quema de grasa.')
+
+
+
+{% endblock %}

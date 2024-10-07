@@ -1,0 +1,19 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Usuarios</title>
+</head>
+<body>
+    <h1>Usuarios Registrados</h1>
+    <ul>
+        {% for usuario in usuarios %}
+            <li>{{ usuario.nombre }} - {{ usuario.rol }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'index' %}">Regresar a la página principal</a>
+</body>
+</html>
+{% endblock %}

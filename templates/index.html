@@ -1,0 +1,25 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Página Principal</title>
+    <!-- Cargar el archivo CSS correctamente -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Bienvenido a la App de Fitness</h1>
+    
+     <div class="button-container">
+        <a href="{% url 'rutinas:index' %}" class="btn btn-primary">Ver Rutinas</a>
+        <a href="{% url 'mycoach:index' %}" class="btn btn-secondary">Ver Informacion usuario </a>
+        <a href="{% url 'controlpesos:index' %}" class="btn btn-success">Ver Información de Nutrición</a>
+        <a href="{% url 'crear_usuario' %}" class="btn btn-warning">Crear Nuevo Usuario</a>
+    </div>
+
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>
