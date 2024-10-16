@@ -17,6 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from . import views
+from .views import logout_view
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,8 +27,9 @@ urlpatterns = [
     path('rutinas/', include('rutinas.urls')),  # Ruta para la app de Rutinas
     path('mycoach/', include('Mycoach.urls')),  # Ruta para la app de MyCoach
     path('controlpesos/', include('control_de_pesos.urls')),  # Ruta para la app de Control de Pesospath('', include('rutinas.urls')),
-    path('crear_usuario/', views.crear_usuario, name='crear_usuario'),
-
+    path('crear_usuario/', views.registrar_usuario, name='crear_usuario'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
 
 ]
 

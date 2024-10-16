@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutriciones</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Lista de Nutriciones</h2>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de Comida</th>
+                    <th>Calorías</th>
+                    <th>Proteínas</th>
+                    <th>Grasas</th>
+                    <th>Carbohidratos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nutricion in nutriciones %}
+                <tr>
+                    <td>{{ nutricion.id }}</td>
+                    <td>{{ nutricion.nombre_comida }}</td>
+                    <td>{{ nutricion.calorias }}</td>
+                    <td>{{ nutricion.proteinas }}</td>
+                    <td>{{ nutricion.grasas }}</td>
+                    <td>{{ nutricion.carbohidratos }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No hay nutriciones registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

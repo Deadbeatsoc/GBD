@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Entrenador</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Asignar Entrenador a {{ deportista.nombre }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="entrenador">Selecciona un Entrenador:</label>
+                <select name="entrenador" id="entrenador" class="form-control" required>
+                    <option value="">Seleccione un entrenador</option>
+                    {% for entrenador in entrenadores %}
+                        <option value="{{ entrenador.id }}">{{ entrenador.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Asignar Entrenador</button>
+        </form>
+    </div>
+</body>
+</html>

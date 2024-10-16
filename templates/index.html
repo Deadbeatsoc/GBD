@@ -1,25 +1,69 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Página Principal</title>
-    <!-- Cargar el archivo CSS correctamente -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal de Fitness</title>
+    <!-- Vincula el archivo CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Framework Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Bienvenido a la App de Fitness</h1>
-    
-     <div class="button-container">
-        <a href="{% url 'rutinas:index' %}" class="btn btn-primary">Ver Rutinas</a>
-        <a href="{% url 'mycoach:index' %}" class="btn btn-secondary">Ver Informacion usuario </a>
-        <a href="{% url 'controlpesos:index' %}" class="btn btn-success">Ver Información de Nutrición</a>
-        <a href="{% url 'crear_usuario' %}" class="btn btn-warning">Crear Nuevo Usuario</a>
+<!-- Hotbar/Navegación Superior -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Fitness App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="navbar-nav ml-auto"> <!-- Este div es crucial -->
+            <!-- Ver Rutinas -->
+            <a class="nav-item nav-link" href="{% url 'rutinas:index' %}">Ver Rutinas</a>
+            <!-- Ver Información de Usuario -->
+            <a class="nav-item nav-link" href="{% url 'mycoach:index' %}">Ver Información de Usuario</a>
+            <!-- Ver Información de Nutrición -->
+            <a class="nav-item nav-link" href="{% url 'controlpesos:index' %}">Ver Información de Nutrición</a>
+            <!-- Crear Nuevo Usuario -->
+            <a class="nav-item nav-link" href="{% url 'crear_usuario' %}">Crear Nuevo Usuario</a>
+            
+            <!-- Mostrar nombre de usuario autenticado -->
+            {% if user.is_authenticated %}
+                <span class="navbar-text">Bienvenido, {{ user.first_name }}!</span>
+                <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
+            {% else %}
+                <a class="nav-item nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+    <!-- Mensajes de éxito o error -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenido principal de la página -->
+    <div class="container mt-5">
+        <h1>Bienvenido a la App de Fitness</h1>
+        <p>Selecciona una opción del menú para continuar.</p>
     </div>
 
-
+    <!-- Aquí irá el contenido dinámico de la página -->
     {% block content %}
     {% endblock %}
 
+    <!-- Opcional: Script de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
 </body>
 </html>
