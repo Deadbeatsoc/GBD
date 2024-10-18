@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import render
 
 class Nutricion(models.Model):
     nombre_comida = models.CharField(max_length=100, null=False, default='')
@@ -9,3 +10,8 @@ class Nutricion(models.Model):
 
     def __str__(self):
         return self.nombre_comida
+
+
+def ver_nutriciones(request):
+    nutriciones = Nutricion.objects.all()
+    return render(request, 'ver_nutriciones.html', {'nutriciones': nutriciones})

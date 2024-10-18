@@ -1,13 +1,37 @@
 from django.shortcuts import redirect, render
-
-from rutinas.models import Usuario
-from .forms import UsuarioForm
+from rutinas.forms import RutinaForm
+from rutinas.models import Ejercicio, Nutricion, Usuario   
+from .forms import  ComidaForm, EjercicioForm
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout as auth_logout
 
 
 
+
+
+def agregar_comida(request):
+    if request.method == 'POST':
+        form = ComidaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ver_nutriciones')  # Redirigir a la lista de nutriciones
+    else:
+        form = ComidaForm()
+    
+    return render(request, 'agregar_comidas.html', {'form': form})
+
+
+
+def ver_nutriciones(request):
+    nutriciones = Nutricion.objects.all()
+    return render(request, 'ver_nutriciones.html', {'nutriciones': nutriciones})
+
+
+
+def ver_nutricion(request):
+    nutriciones = Nutricion.objects.all()
+    return render(request, 'ver_nutriciones.html', {'nutriciones': nutriciones})
 
 
 def index(request):
@@ -45,6 +69,7 @@ def registrar_usuario(request):
             altura=altura,
             fecha_nacimiento=fecha_nacimiento
         )
+
         
         # Guardar el usuario en la base de datos
         usuario.save()
@@ -75,3 +100,35 @@ def login_view(request):
             messages.error(request, 'Usuario o contraseña incorrectos.')
 
     return render(request, 'registration/login.html')
+
+def agregar_rutina(request):
+    if request.method == 'POST':
+        form = RutinaForm(request.POST)
+        if form.is_valid():
+            form.save()  # Guardar la nueva rutina en la base de datos
+            return redirect('rutinas')  # Redirige a la página de rutinas después de guardar
+    else:
+        form = RutinaForm()
+    
+    return render(request, 'agregar_rutina.html', {'form': form})
+
+
+
+def agregar_ejercicio(request):
+    if request.method == 'POST':
+        form = EjercicioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ver_ejercicios')  # Redirigir a la página que lista los ejercicios
+    else:
+        form = EjercicioForm()
+    
+    return render(request, 'agregar_ejercicio.html', {'form': form})
+
+
+def ver_ejercicios(request):
+    ejercicios = Ejercicio.objects.all()
+    return render(request, 'ver_ejercicios.html', {'ejercicios': ejercicios})
+
+
+

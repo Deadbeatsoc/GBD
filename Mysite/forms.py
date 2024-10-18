@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.hashers import make_password
 
-from rutinas.models import Usuario  # Para encriptar la contraseña
+from rutinas.models import Ejercicio, Nutricion, Usuario  # Para encriptar la contraseña
 
 
 class UsuarioForm(forms.ModelForm):
@@ -22,5 +22,31 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
 
 
+class EjercicioForm(forms.ModelForm):
+    class Meta:
+        model = Ejercicio
+        fields = ['nombre_ejercicio', 'descripcion', 'tipo']  # Campos que quieres en el formulario
+        widgets = {
+            'descripcion': forms.Textarea(attrs={'rows': 3}),
+        }
 
-    
+
+class ComidaForm(forms.ModelForm):
+    class Meta:
+        model = Nutricion
+        fields = ['nombre_comida', 'calorias', 'proteinas', 'grasas', 'carbohidratos']
+        labels = {
+            'nombre_comida': 'Nombre de Comida',
+            'calorias': 'Calorías',
+            'proteinas': 'Proteínas (g)',
+            'grasas': 'Grasas (g)',
+            'carbohidratos': 'Carbohidratos (g)',
+        }
+        widgets = {
+            'nombre_comida': forms.TextInput(attrs={'class': 'form-control'}),
+            'calorias': forms.NumberInput(attrs={'class': 'form-control'}),
+            'proteinas': forms.NumberInput(attrs={'class': 'form-control'}),
+            'grasas': forms.NumberInput(attrs={'class': 'form-control'}),
+            'carbohidratos': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista de Ejercicios</h2>
+    <ul>
+        {% for ejercicio in ejercicios %}
+            <li>{{ ejercicio.nombre_ejercicio }} - {{ ejercicio.descripcion }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'agregar_ejercicio' %}" class="btn btn-success">Agregar nuevo ejercicio</a>
+</div>
+{% endblock %}

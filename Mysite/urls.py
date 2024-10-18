@@ -17,8 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from . import views
-from .views import logout_view
-
+from .views import logout_view 
 
 
 urlpatterns = [
@@ -30,6 +29,12 @@ urlpatterns = [
     path('crear_usuario/', views.registrar_usuario, name='crear_usuario'),
     path('login/', views.login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('agregar/', views.agregar_rutina, name='agregar_rutina'),
+    path('agregar_ejercicio/', views.agregar_ejercicio, name='agregar_ejercicio'),
+    path('ver_ejercicios/', views.ver_ejercicios, name='ver_ejercicios'),  # Ruta para ver los ejercicios
+    path('agregar_comida/', views.agregar_comida, name='agregar_comida'),
+    path('ver_nutriciones/', views.ver_nutriciones, name='ver_nutriciones'),  # Ruta para ver la lista de nutriciones
+
 
 ]
 

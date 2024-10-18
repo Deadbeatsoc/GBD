@@ -1,13 +1,28 @@
 from pyexpat.errors import messages
 from django.shortcuts import redirect, render
-from rutinas.models import Usuario
-
-
+from Mysite.forms import ComidaForm
+from rutinas.models import Nutricion, Usuario
 def ver_usuarios(request):
     usuarios = Usuario.objects.all()  # Obtiene todos los usuarios
     return render(request, 'usuarios.html', {'usuarios': usuarios})  # Renderiza la plantilla
 
 
+def agregar_comida(request):
+    if request.method == 'POST':
+        form = ComidaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ver_nutriciones')  # Redirigir a la lista de nutriciones
+    else:
+        form = ComidaForm()
+    
+    return render(request, 'agregar_comidas.html', {'form': form})
+
+
+
+def ver_nutriciones(request):
+    nutriciones = Nutricion.objects.all()
+    return render(request, 'ver_nutriciones.html', {'nutriciones': nutriciones})
 
 
 def registrar_usuario(request):
