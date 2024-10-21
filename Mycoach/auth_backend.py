@@ -1,6 +1,6 @@
 # auth_backend.py
 from django.contrib.auth.backends import BaseBackend
-from .models import Usuario
+from rutinas.models import Usuario
 from django.contrib.auth.hashers import check_password
 
 class UsuarioBackend(BaseBackend):

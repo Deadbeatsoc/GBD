@@ -140,7 +140,7 @@ LOGOUT_REDIRECT_URL = 'login'
 
 LOGIN_URL = 'login'
 
-AUTHENTICATION_BACKENDS = ['Mycoach.auth_backend.UsuarioBackend']
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',]
 
 
 

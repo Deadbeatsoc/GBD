@@ -117,3 +117,21 @@ class MasaSegmental(models.Model):
 
     def __str__(self):
         return f"Masa segmental de {self.musculo} - Valoración {self.valoracion}"
+
+
+class Coach(models.Model):
+    nombre = models.CharField(max_length=100)
+    especialidad = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Deportista(models.Model):
+    nombre = models.CharField(max_length=100)
+    edad = models.IntegerField()
+    deporte = models.CharField(max_length=100)
+    coach = models.ForeignKey(Coach, on_delete=models.CASCADE, related_name="deportistas")
+
+    def __str__(self):
+        return self.nombre
