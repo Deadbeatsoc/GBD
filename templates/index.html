@@ -27,14 +27,14 @@
             <!-- Ver Información de Nutrición -->
             <a class="nav-item nav-link" href="{% url 'controlpesos:index' %}">Ver Información de Nutrición</a>
             <!-- Crear Nuevo Usuario -->
-            <a class="nav-item nav-link" href="{% url 'crear_usuario' %}">Crear Nuevo Usuario</a>
+            <a class="nav-item nav-link" href="{% url 'mycoach:crear_usuario' %}">Crear Nuevo Usuario</a>
             
             <!-- Mostrar nombre de usuario autenticado -->
             {% if user.is_authenticated %}
                 <span class="navbar-text">Bienvenido, {{ user.first_name }}!</span>
-                <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
+                <a class="nav-item nav-link" href="{% url 'mycoach:logout' %}">Cerrar Sesión</a>
             {% else %}
-                <a class="nav-item nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
+                <a class="nav-item nav-link" href="{% url 'mycoach:login' %}">Iniciar Sesión</a>
             {% endif %}
         </div>
     </div>

@@ -8,6 +8,6 @@
             <li>{{ ejercicio.nombre_ejercicio }} - {{ ejercicio.descripcion }}</li>
         {% endfor %}
     </ul>
-    <a href="{% url 'agregar_ejercicio' %}" class="btn btn-success">Agregar nuevo ejercicio</a>
+    <a href="{% url 'rutinas:agregar_ejercicio' %}" class="btn btn-success">Agregar nuevo ejercicio</a>
 </div>
 {% endblock %}

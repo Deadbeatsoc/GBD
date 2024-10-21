@@ -5,7 +5,8 @@ app_name = 'controlpesos'
 
 urlpatterns = [
     path('controlpesos/', views.ver_nutriciones, name='index'),
-
+    path('agregar_comida/', views.agregar_comida, name='agregar_comida'),
+    path('ver_nutriciones/', views.ver_nutriciones, name='ver_nutriciones'),
     
 
 

@@ -82,53 +82,8 @@ def registrar_usuario(request):
 
 
 
-def login_view(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-
-        # Verifica si el usuario existe con el correo y contraseña proporcionados
-        try:
-            user = Usuario.objects.get(email=email, contrasena=password)
-            # Si el usuario es válido, inicias sesión
-            if user:
-                # Aquí puedes usar 'login' si estás usando el sistema de autenticación predeterminado de Django
-                messages.success(request, f'Bienvenido, {user.nombre}!')
-                return redirect('index')  # Redirige a la página principal
-        except Usuario.DoesNotExist:
-            # Si no coincide, muestra un mensaje de error
-            messages.error(request, 'Usuario o contraseña incorrectos.')
-
-    return render(request, 'registration/login.html')
-
-def agregar_rutina(request):
-    if request.method == 'POST':
-        form = RutinaForm(request.POST)
-        if form.is_valid():
-            form.save()  # Guardar la nueva rutina en la base de datos
-            return redirect('rutinas')  # Redirige a la página de rutinas después de guardar
-    else:
-        form = RutinaForm()
-    
-    return render(request, 'agregar_rutina.html', {'form': form})
 
 
-
-def agregar_ejercicio(request):
-    if request.method == 'POST':
-        form = EjercicioForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('ver_ejercicios')  # Redirigir a la página que lista los ejercicios
-    else:
-        form = EjercicioForm()
-    
-    return render(request, 'agregar_ejercicio.html', {'form': form})
-
-
-def ver_ejercicios(request):
-    ejercicios = Ejercicio.objects.all()
-    return render(request, 'ver_ejercicios.html', {'ejercicios': ejercicios})
 
 
 
