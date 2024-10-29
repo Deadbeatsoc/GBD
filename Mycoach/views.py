@@ -2,6 +2,12 @@ from pyexpat.errors import messages
 from django.shortcuts import redirect, render
 from Mysite.forms import ComidaForm
 from rutinas.models import Nutricion, Usuario
+from django.contrib.auth import logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User  # Importa el modelo de usuario predeterminado de Django
+
+
 
 
 def index(request):
@@ -72,19 +78,30 @@ def registrar_usuario(request):
 
 def login_view(request):
     if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
 
-        # Verifica si el usuario existe con el correo y contraseña proporcionados
-        try:
-            user = Usuario.objects.get(email=email, contrasena=password)
-            # Si el usuario es válido, inicias sesión
-            if user:
-                # Aquí puedes usar 'login' si estás usando el sistema de autenticación predeterminado de Django
-                messages.success(request, f'Bienvenido, {user.nombre}!')
-                return redirect('index')  # Redirige a la página principal
-        except Usuario.DoesNotExist:
-            # Si no coincide, muestra un mensaje de error
-            messages.error(request, 'Usuario o contraseña incorrectos.')
+            # Verifica si el usuario existe en la base de datos
+            try:
+                user = User.objects.get(username=username)
+                if user.check_password(password):
+                    login(request, user)  # Inicia sesión si la contraseña es correcta
+                    return redirect('index')  # Redirige a la página principal o la que prefieras
+                else:
+                    error_message = "Contraseña incorrecta."
+            except User.DoesNotExist:
+                error_message = "El usuario no existe."
 
-    return render(request, 'registration/login.html')
+            return render(request, 'registration/login.html', {'form': form, 'error': error_message})
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'registration/login.html', {'form': form})
+
+
+
+def cerrar_sesion(request):
+    logout(request)
+    return redirect('login')
