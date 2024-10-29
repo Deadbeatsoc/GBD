@@ -14,7 +14,7 @@
         table {
             border-collapse: collapse;
             margin: 0 20px;
-            width: 45%;
+            width: 60%;
         }
         th, td {
             border: 1px solid #ddd;
@@ -32,50 +32,37 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        .no-data {
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Rutinas de entrenaminto</h1>
+        <h1>Rutinas de entrenamiento</h1>
     </div>
     <div class="routine-container">
         <table>
             <thead>
                 <tr>
-                    <th>Series</th>
-                    <th>Ejercicio</th>
+                    <th>Fecha de Inicio</th>
+                    <th>Nombre de Rutina</th>
                 </tr>
             </thead>
             <tbody>
-                {% for rutina in rutinas %}
-                <tr>
-                    <td>{{ rutina.fecha_inicio|date:"H:i" }}</td>
-                    <td>{{ rutina.nombre_rutina }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <table>
-            <thead>
-                <tr>
-                    <th>Series</th>
-                    <th>Ejercicio</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí podrías agregar más rutinas si tienes más datos o lo prefieres -->
-                <tr>
-                    <td>4</td>
-                    <td>Pull overs</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Dominadas</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>bench press</td>
-                </tr>
+                {% if rutinas %}
+                    {% for rutina in rutinas %}
+                    <tr>
+                        <td>{{ rutina.fecha_inicio|date:"Y-m-d" }}</td>
+                        <td>{{ rutina.nombre_rutina }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="2" class="no-data">No hay rutinas registradas.</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
