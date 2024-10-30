@@ -44,9 +44,8 @@ class ComidaForm(forms.ModelForm):
         }
         widgets = {
             'nombre_comida': forms.TextInput(attrs={'class': 'form-control'}),
-            'calorias': forms.NumberInput(attrs={'class': 'form-control'}),
-            'proteinas': forms.NumberInput(attrs={'class': 'form-control'}),
-            'grasas': forms.NumberInput(attrs={'class': 'form-control'}),
-            'carbohidratos': forms.NumberInput(attrs={'class': 'form-control'}),
+            'calorias': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'proteinas': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'grasas': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'carbohidratos': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
-

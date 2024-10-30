@@ -11,9 +11,10 @@ from .models import Nutricion
 
 
 
-
 def index(request):
-    return render(request, 'ver_nutriciones.html')  # Ruta específica a la plantilla
+    # Recuperar todas las nutriciones
+    comidas = Nutricion.objects.all()  # Aquí obtienes todos los registros de la tabla Nutricion
+    return render(request, 'control_de_peso/index.html', {'nutriciones': comidas})
 
 
 
@@ -34,7 +35,7 @@ def agregar_comida(request):
         form = ComidaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('ver_nutriciones')  # Redirigir a la lista de nutriciones
+            return redirect('controlpesos:index')  # Redirige a la vista index de controlpesos
     else:
         form = ComidaForm()
     
