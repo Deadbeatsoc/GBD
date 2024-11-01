@@ -1,19 +1,45 @@
-{% extends 'index.html' %}
-{% block content %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Usuarios</title>
-</head>
-<body>
-    <h1>Usuarios Registrados</h1>
-    <ul>
-        {% for usuario in usuarios %}
-            <li>{{ usuario.nombre }} - {{ usuario.rol }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'index' %}">Regresar a la página principal</a>
-</body>
-</html>
+{% block content %}
+<div class="container mt-4">
+    <h2>Mi Información Personal</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Información Básica</h5>
+            <p><strong>Nombre:</strong> {{ info_usuario.Nombre }}</p>
+            <p><strong>Email:</strong> {{ info_usuario.Email }}</p>
+            <p><strong>Edad:</strong> {{ info_usuario.Edad }}</p>
+            <p><strong>Peso Actual:</strong> {{ info_usuario.PesoActual }} kg</p>
+            <p><strong>Altura:</strong> {{ info_usuario.AlturaActual }} m</p>
+        </div>
+    </div>
+
+    <h2>Mis Valoraciones Personales</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha de Valoración</th>
+                <th>Masa Segmental</th>
+                <th>Grasa Corporal</th>
+                <th>Agua Corporal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for valoracion in valoraciones %}
+                <tr>
+                    <td>{{ valoracion.FechaValoracion }}</td>
+                    <td>{{ valoracion.MasaSegmental }}</td>
+                    <td>{{ valoracion.GrasaCorporal }}</td>
+                    <td>{{ valoracion.AguaCorporal }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No tienes valoraciones personales registradas.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'mycoach:agregar_valoraciones' %}" class="btn btn-primary mt-3">Agregar Valoración</a>
+</div>
 {% endblock %}

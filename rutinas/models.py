@@ -88,6 +88,8 @@ class ValoracionPersonal(models.Model):
     grasa_corporal = models.DecimalField(max_digits=5, decimal_places=2)
     agua_corporal = models.DecimalField(max_digits=5, decimal_places=2)
 
+    def __str__(self):
+        return f"Valoración de {self.usuario} en {self.fecha_valoracion}"
 
 class ComentarioEntrenamiento(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)

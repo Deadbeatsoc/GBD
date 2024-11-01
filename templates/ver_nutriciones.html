@@ -6,7 +6,6 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre de Comida</th>
                 <th>Calorías</th>
                 <th>Proteínas</th>
@@ -18,7 +17,6 @@
             {% if nutriciones %}
                 {% for nutricion in nutriciones %}
                     <tr>
-                        <td>{{ nutricion.id }}</td>
                         <td>{{ nutricion.nombre_comida }}</td>
                         <td>{{ nutricion.calorias }}</td>
                         <td>{{ nutricion.proteinas }}</td>
@@ -28,7 +26,7 @@
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="6" class="text-center">No hay nutriciones registradas.</td>
+                    <td colspan="5" class="text-center">No hay nutriciones registradas.</td>
                 </tr>
             {% endif %}
         </tbody>

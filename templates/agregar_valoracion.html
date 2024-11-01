@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Agregar Valoración Personal</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Esto incluirá el campo de fecha correctamente -->
+        <button type="submit" class="btn btn-primary">Guardar Valoración</button>
+    </form>
+    <a href="{% url 'controlpesos:index' %}" class="btn btn-secondary mt-3">Cancelar</a>
+</div>
+{% endblock %}
