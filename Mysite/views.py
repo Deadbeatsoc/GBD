@@ -1,10 +1,11 @@
 from django.shortcuts import redirect, render
-from rutinas.forms import RutinaForm
-from rutinas.models import Ejercicio, Nutricion, Usuario   
-from .forms import  ComidaForm, EjercicioForm
+from Mycoach.views import AsignarPlanNutricionalForm, AsignarRutinaForm
+from rutinas.models import  Nutricion, Usuario   
+from .forms import  ComidaForm
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -78,7 +79,6 @@ def registrar_usuario(request):
         return redirect('index')  # Redirigir a la página principal
 
     return render(request, 'registro_usuario.html')  # Muestra el formulario de registro
-
 
 
 

@@ -1,7 +1,7 @@
+from urllib import request
 from django import forms
 from django.contrib.auth.hashers import make_password
-
-from rutinas.models import Ejercicio, Nutricion, Usuario  # Para encriptar la contraseña
+from rutinas.models import Ejercicio, Nutricion, PlanNutricional, Rutina, Usuario  # Para encriptar la contraseña
 
 
 class UsuarioForm(forms.ModelForm):
@@ -49,3 +49,32 @@ class ComidaForm(forms.ModelForm):
             'grasas': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
             'carbohidratos': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
+
+
+
+class AsignarRutinaForm(forms.ModelForm):
+    usuario = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(rol__in=['Entrenador', 'Deportista']),
+        label="Asignar a usuario"
+    )
+    
+    class Meta:
+        model = Rutina
+        fields = ['usuario', 'tipo', 'nombre_rutina', 'descripcion', 'fecha_inicio']
+        widgets = {
+            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class AsignarPlanNutricionalForm(forms.ModelForm):
+    usuario = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(rol__in=['Entrenador', 'Deportista']),
+        label="Asignar a usuario"
+    )
+    
+    class Meta:
+        model = PlanNutricional
+        fields = ['usuario', 'comida', 'fecha_plan']
+        widgets = {
+            'fecha_plan': forms.DateInput(attrs={'type': 'date'}),
+        }
+

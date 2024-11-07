@@ -1,36 +1,43 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container mt-4">
-    <h2>Lista de Nutriciones</h2>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Nombre de Comida</th>
-                <th>Calorías</th>
-                <th>Proteínas</th>
-                <th>Grasas</th>
-                <th>Carbohidratos</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if nutriciones %}
+<!-- lista_comidas.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Comidas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Lista de Comidas Registradas</h1>
+        
+        <!-- Tabla para mostrar los datos -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre de Comida</th>
+                    <th>Calorías</th>
+                    <th>Proteínas (g)</th>
+                    <th>Grasas (g)</th>
+                    <th>Carbohidratos (g)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Itera sobre los registros de comidas para mostrarlos en la tabla -->
                 {% for nutricion in nutriciones %}
                     <tr>
-                        <td>{{ nutricion.nombre_comida }}</td>
-                        <td>{{ nutricion.calorias }}</td>
-                        <td>{{ nutricion.proteinas }}</td>
-                        <td>{{ nutricion.grasas }}</td>
-                        <td>{{ nutricion.carbohidratos }}</td>
+                        <td>{{ comida.nombre_comida }}</td>
+                        <td>{{ comida.calorias }}</td>
+                        <td>{{ comida.proteinas }}</td>
+                        <td>{{ comida.grasas }}</td>
+                        <td>{{ comida.carbohidratos }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No hay comidas registradas.</td>
                     </tr>
                 {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="5" class="text-center">No hay nutriciones registradas.</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-    <a href="{% url 'controlpesos:agregar_comida' %}" class="btn btn-success">Agregar nueva comida</a>
-</div>
-{% endblock %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

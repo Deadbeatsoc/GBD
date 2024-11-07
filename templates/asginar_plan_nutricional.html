@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Plan Nutricional</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="card-title mb-0">Asignar Plan Nutricional</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" id="planNutricionalForm">
+                            <!-- Django CSRF Token iría aquí -->
+                            <div class="mb-3">
+                                <label for="id_usuario" class="form-label">Asignar a usuario</label>
+                                <select class="form-select" id="id_usuario" name="usuario" required>
+                                    <option value="">Seleccionar usuario</option>
+                                    <!-- Aquí Django renderizará las opciones de usuarios -->
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_comida" class="form-label">Comida</label>
+                                <select class="form-select" id="id_comida" name="comida" required>
+                                    <option value="">Seleccionar comida</option>
+                                    <!-- Aquí Django renderizará las opciones de comidas -->
+                                </select>
+                                <div class="form-text text-muted">
+                                    Seleccione la comida a incluir en el plan nutricional
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_fecha_plan" class="form-label">Fecha del Plan</label>
+                                <input type="date" class="form-control" id="id_fecha_plan" name="fecha_plan" required>
+                                <div class="form-text text-muted">
+                                    Fecha de inicio del plan nutricional
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Asignar Plan
+                                </button>
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Limpiar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

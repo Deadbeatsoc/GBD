@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Rutina</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">Asignar Rutina</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" id="rutinasForm">
+                            <!-- Django CSRF Token iría aquí -->
+                            <div class="mb-3">
+                                <label for="id_usuario" class="form-label">Asignar a usuario</label>
+                                <select class="form-select" id="id_usuario" name="usuario" required>
+                                    <option value="">Seleccionar usuario</option>
+                                    <!-- Aquí Django renderizará las opciones de usuarios -->
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_tipo" class="form-label">Tipo de Rutina</label>
+                                <select class="form-select" id="id_tipo" name="tipo" required>
+                                    <option value="">Seleccionar tipo</option>
+                                    <!-- Aquí Django renderizará los tipos de rutina -->
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_nombre_rutina" class="form-label">Nombre de la Rutina</label>
+                                <input type="text" class="form-control" id="id_nombre_rutina" name="nombre_rutina" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_descripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="id_descripcion" name="descripcion" rows="3"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_fecha_inicio" class="form-label">Fecha de Inicio</label>
+                                <input type="date" class="form-control" id="id_fecha_inicio" name="fecha_inicio" required>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Guardar Rutina</button>
+                                <button type="reset" class="btn btn-secondary">Limpiar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
