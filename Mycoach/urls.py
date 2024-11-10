@@ -17,7 +17,7 @@ urlpatterns = [
     path('rutinas/eliminar/<int:pk>/', views.eliminar_rutina, name='eliminar_rutina'),
     path('planes-nutricionales/', views.lista_planes_nutricionales, name='lista_planes_nutricionales'),
     path('planes-nutricionales/asignar/', views.asignar_plan_nutricional, name='asignar_plan_nutricional'),
-    path('planes-nutricionales/editar/<int:pk>/', views.editar_plan_nutricional, name='editar_plan_nutricional'),
+    path('planes-nutricionales/editar/<int:pk>/', views.editar_nutricion, name='editar_plan_nutricional'),
     path('planes-nutricionales/eliminar/<int:pk>/', views.eliminar_nutricion, name='eliminar_plan_nutricional'),
 
 ]

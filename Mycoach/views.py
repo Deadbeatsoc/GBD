@@ -228,21 +228,26 @@ def asignar_plan_nutricional(request):
     }
     return render(request,'asignar_plan_nutricional.html', context)
 
+
 @login_required
-def editar_plan_nutricional(request, pk):
-    plan = get_object_or_404(PlanNutricional, pk=pk)
+def editar_nutricion(request, pk):
+    # Obtener el objeto Nutricion o devolver un error 404 si no existe
+    nutricion = get_object_or_404(Nutricion, pk=pk)
+    
     if request.method == 'POST':
-        form = AsignarPlanNutricionalForm(request.POST, instance=plan)
+        # Pasar la instancia de Nutricion al formulario para editar
+        form = ComidaForm(request.POST, instance=nutricion)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Plan nutricional actualizado exitosamente')
-            return redirect('ver_nutriciones')
+            messages.success(request, 'Información de nutrición actualizada exitosamente')
+            # Redirigir a la vista de nutriciones (ajusta el nombre de la URL según tu configuración)
+            return redirect('controlpesos:ver_nutriciones')
     else:
-        form = AsignarPlanNutricionalForm(instance=plan)
+        form = ComidaForm(instance=nutricion)
     
     context = {
         'form': form,
-        'titulo': 'Editar Plan Nutricional'
+        'titulo': 'Editar Información de Nutrición'
     }
     return render(request, 'asignar_plan.html', context)
 
@@ -254,8 +259,6 @@ def eliminar_plan_nutricional(request, pk):
         messages.success(request, 'Plan nutricional eliminado exitosamente')
         return redirect('lista_planes_nutricionales')
     return render(request, 'confirmar_eliminar.html', {'objeto': plan})
-
-
 
 
 
