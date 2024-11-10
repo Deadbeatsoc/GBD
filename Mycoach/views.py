@@ -1,8 +1,6 @@
-from urllib import request
 from django.utils import timezone  # Asegúrate de importar esto
 from pyexpat.errors import messages
 from django.shortcuts import redirect, render
-from Mysite import forms
 from Mysite.forms import AsignarPlanNutricionalForm, AsignarRutinaForm, ComidaForm
 from rutinas.models import Nutricion, PlanNutricional, Rutina, Usuario
 from django.contrib.auth import logout
@@ -12,7 +10,6 @@ from django.contrib.auth.models import User  # Importa el modelo de usuario pred
 from rutinas.models import Usuario
 from rutinas.models import ValoracionPersonal
 from Mycoach.forms import ValoracionForm
-from django.forms import ModelChoiceField,DateInput  # Importa ModelChoiceField
 from django.contrib.auth.decorators import login_required
 
 
@@ -142,9 +139,8 @@ def agregar_valoracion(request):
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from rutinas.models import Rutina, PlanNutricional, Usuario
-from .forms import AsignarRutinaForm, AsignarPlanNutricionalForm
+from  Mysite.forms import AsignarRutinaForm, AsignarPlanNutricionalForm
 
 # Vistas para Rutinas
 @login_required
@@ -154,7 +150,12 @@ def lista_rutinas(request):
         'rutinas': rutinas,
         'titulo': 'Listado de Rutinas'
     }
-    return render(request, 'gym/rutinas/lista_rutinas.html', context)
+    return render(request, 'rutinas/rutinas.html', context)
+
+
+
+
+
 
 @login_required
 def asignar_rutina(request):
@@ -163,7 +164,7 @@ def asignar_rutina(request):
         if form.is_valid():
             rutina = form.save()
             messages.success(request, 'Rutina asignada exitosamente')
-            return redirect('lista_rutinas')
+            return redirect('rutinas')
     else:
         form = AsignarRutinaForm()
     
@@ -171,7 +172,7 @@ def asignar_rutina(request):
         'form': form,
         'titulo': 'Asignar Nueva Rutina'
     }
-    return render(request, 'gym/rutinas/asignar_rutina.html', context)
+    return render(request, 'asignar_rutinas.html', context)
 
 @login_required
 def editar_rutina(request, pk):
@@ -181,7 +182,7 @@ def editar_rutina(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Rutina actualizada exitosamente')
-            return redirect('lista_rutinas')
+            return redirect('rutinas')
     else:
         form = AsignarRutinaForm(instance=rutina)
     
@@ -189,7 +190,7 @@ def editar_rutina(request, pk):
         'form': form,
         'titulo': 'Editar Rutina'
     }
-    return render(request, 'gym/rutinas/asignar_rutina.html', context)
+    return render(request, 'asignar_rutinas.html', context)
 
 @login_required
 def eliminar_rutina(request, pk):
@@ -197,8 +198,8 @@ def eliminar_rutina(request, pk):
     if request.method == 'POST':
         rutina.delete()
         messages.success(request, 'Rutina eliminada exitosamente')
-        return redirect('lista_rutinas')
-    return render(request, 'gym/rutinas/confirmar_eliminar.html', {'objeto': rutina})
+        return redirect('rutinas')
+    return render(request, 'confirmar_eliminar.html', {'objeto': rutina})
 
 # Vistas para Planes Nutricionales
 @login_required
@@ -208,7 +209,7 @@ def lista_planes_nutricionales(request):
         'planes': planes,
         'titulo': 'Listado de Planes Nutricionales'
     }
-    return render(request, 'gym/planes_nutricionales/lista_planes.html', context)
+    return render(request, 'lista_planes.html', context)
 
 @login_required
 def asignar_plan_nutricional(request):
@@ -217,7 +218,7 @@ def asignar_plan_nutricional(request):
         if form.is_valid():
             plan = form.save()
             messages.success(request, 'Plan nutricional asignado exitosamente')
-            return redirect('lista_planes_nutricionales')
+            return redirect('ver_nutriciones')
     else:
         form = AsignarPlanNutricionalForm()
     
@@ -225,7 +226,7 @@ def asignar_plan_nutricional(request):
         'form': form,
         'titulo': 'Asignar Nuevo Plan Nutricional'
     }
-    return render(request, 'gym/planes_nutricionales/asignar_plan.html', context)
+    return render(request,'asignar_plan_nutricional.html', context)
 
 @login_required
 def editar_plan_nutricional(request, pk):
@@ -235,7 +236,7 @@ def editar_plan_nutricional(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Plan nutricional actualizado exitosamente')
-            return redirect('lista_planes_nutricionales')
+            return redirect('ver_nutriciones')
     else:
         form = AsignarPlanNutricionalForm(instance=plan)
     
@@ -243,7 +244,7 @@ def editar_plan_nutricional(request, pk):
         'form': form,
         'titulo': 'Editar Plan Nutricional'
     }
-    return render(request, 'gym/planes_nutricionales/asignar_plan.html', context)
+    return render(request, 'asignar_plan.html', context)
 
 @login_required
 def eliminar_plan_nutricional(request, pk):
@@ -252,4 +253,4 @@ def eliminar_plan_nutricional(request, pk):
         plan.delete()
         messages.success(request, 'Plan nutricional eliminado exitosamente')
         return redirect('lista_planes_nutricionales')
-    return render(request, 'gym/planes_nutricionales/confirmar_eliminar.html', {'objeto': plan})
+    return render(request, 'confirmar_eliminar.html', {'objeto': plan})

@@ -1,43 +1,91 @@
-<!-- lista_comidas.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Lista de Comidas</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Lista de Comidas Registradas</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Lista de Comidas Registradas</h1>
+            <a href="{% url 'controlpesos:agregar_comidas' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Agregar Nueva Comida
+            </a>
+        </div>
         
-        <!-- Tabla para mostrar los datos -->
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Nombre de Comida</th>
-                    <th>Calorías</th>
-                    <th>Proteínas (g)</th>
-                    <th>Grasas (g)</th>
-                    <th>Carbohidratos (g)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Itera sobre los registros de comidas para mostrarlos en la tabla -->
-                {% for nutricion in nutriciones %}
+        {% if nutriciones %}
+            <!-- Debug info -->
+            <div class="alert alert-info">
+                Número de registros encontrados: {{ nutriciones|length }}
+            </div>
+            
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td>{{ comida.nombre_comida }}</td>
-                        <td>{{ comida.calorias }}</td>
-                        <td>{{ comida.proteinas }}</td>
-                        <td>{{ comida.grasas }}</td>
-                        <td>{{ comida.carbohidratos }}</td>
+                        <th>Nombre de Comida</th>
+                        <th>Calorías</th>
+                        <th>Proteínas (g)</th>
+                        <th>Grasas (g)</th>
+                        <th>Carbohidratos (g)</th>
+                        <th>Acciones</th>
                     </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="5">No hay comidas registradas.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for nutricion in nutriciones %}
+                        <tr>
+                            <td>{{ nutricion.nombre_comida }}</td>
+                            <td>{{ nutricion.calorias }}</td>
+                            <td>{{ nutricion.proteinas }}</td>
+                            <td>{{ nutricion.grasas }}</td>
+                            <td>{{ nutricion.carbohidratos }}</td>
+                            <td>
+                                <a href="{% url 'mycoach:editar_plan_nutricional' nutricion.id %}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ nutricion.id }}">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+
+                                <!-- Modal de confirmación para eliminar -->
+                                <div class="modal fade" id="deleteModal{{ nutricion.id }}" tabindex="-1" role="dialog">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirmar eliminación</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro de que deseas eliminar "{{ nutricion.nombre_comida }}"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                <form action="{% url 'mycoach:eliminar_plan_nutricional' nutricion.id %}" method="POST" style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-warning">
+                No hay comidas registradas. <a href="{% url 'controlpesos:agregar_comidas' %}" class="alert-link">¡Agrega una ahora!</a>
+            </div>
+        {% endif %}
     </div>
+
+    <!-- Scripts necesarios para Bootstrap y el modal -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

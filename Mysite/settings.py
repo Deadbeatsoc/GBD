@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'control_de_pesos',
     'Mycoach',
     'rutinas',
+    'widget_tweaks',
+
     
 ]
 

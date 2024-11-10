@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Listado de Planes Nutricionales{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Planes Nutricionales</h3>
+        <a href="{% url 'asignar_plan_nutricional' %}" class="btn btn-light">
+            <i class="bi bi-plus-circle"></i> Nuevo Plan
+        </a>
+    </div>
+    <div class="card-body">
+        {% if planes %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Comida</th>
+                            <th>Fecha Plan</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plan in planes %}
+                        <tr>
+                            <td>{{ plan.usuario }}</td>
+                            <td>{{ plan.comida }}</td>
+                            <td>{{ plan.fecha_plan }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'editar_plan_nutricional' plan.pk %}" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'eliminar_plan_nutricional' plan.pk %}" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No hay planes nutricionales registrados.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
