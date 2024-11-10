@@ -254,3 +254,24 @@ def eliminar_plan_nutricional(request, pk):
         messages.success(request, 'Plan nutricional eliminado exitosamente')
         return redirect('lista_planes_nutricionales')
     return render(request, 'confirmar_eliminar.html', {'objeto': plan})
+
+
+
+
+
+
+
+@login_required
+def eliminar_nutricion(request, pk):
+    # Obtener el objeto de Nutricion o devolver un error 404 si no existe
+    nutricion = get_object_or_404(Nutricion, pk=pk)
+    
+    if request.method == 'POST':
+        # Eliminar el objeto si la solicitud es POST
+        nutricion.delete()
+        messages.success(request, 'Elemento de nutrición eliminado exitosamente')
+        # Redirigir a la lista de nutriciones después de la eliminación
+        return redirect('controlpesos:ver_nutriciones')
+    
+    # Mostrar una confirmación de eliminación si la solicitud es GET
+    return render(request, 'confirmar_eliminar.html', {'objeto': nutricion})
