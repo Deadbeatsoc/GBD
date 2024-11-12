@@ -1,16 +1,15 @@
-from django.utils import timezone  # Asegúrate de importar esto
 from pyexpat.errors import messages
 from django.shortcuts import redirect, render
-from Mysite.forms import AsignarPlanNutricionalForm, AsignarRutinaForm, ComidaForm
+from Mysite.forms import AsignarPlanNutricionalForm, AsignarRutinaForm, ComidaForm, LoginForm, RegistroForm
 from rutinas.models import Nutricion, PlanNutricional, Rutina, Usuario
 from django.contrib.auth import logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
-from django.contrib.auth.models import User  # Importa el modelo de usuario predeterminado de Django
 from rutinas.models import Usuario
 from rutinas.models import ValoracionPersonal
-from Mycoach.forms import ValoracionForm
 from django.contrib.auth.decorators import login_required
+from .forms import ValoracionPersonalForm
+from django.contrib.auth.hashers import make_password, check_password
 
 
 
@@ -58,61 +57,38 @@ def ver_nutriciones(request):
 
 def registrar_usuario(request):
     if request.method == 'POST':
-        # Obtener los datos del formulario
-        nombre = request.POST.get('nombre')
-        email = request.POST.get('email')
-        contrasena = request.POST.get('contrasena')
-        rol = request.POST.get('rol')
-        sexo = request.POST.get('sexo')
-        edad = request.POST.get('edad')
-        peso = request.POST.get('peso')
-        altura = request.POST.get('altura')
-        fecha_nacimiento = request.POST.get('fecha_nacimiento')
-
-        # Crear el usuario
-        nuevo_usuario = Usuario(
-            nombre=nombre,
-            email=email,
-            contrasena=contrasena,  # Asegúrate de encriptar la contraseña en un entorno real
-            rol=rol,
-            sexo=sexo,
-            edad=edad,
-            peso=peso,
-            altura=altura,
-            fecha_nacimiento=fecha_nacimiento
-        )
-        
-        # Guardar el usuario en la base de datos
-        nuevo_usuario.save()
-
-        messages.success(request, 'Usuario registrado exitosamente.')
-        return redirect('index')  # Redirigir a la página principal o a otra página
-
-    return render(request, 'registro_usuario.html')  # Mostrar el formulario si no es POST
-
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            # Verificar que las contraseñas coincidan
+            if form.cleaned_data['contrasena'] == form.cleaned_data['confirmar_contrasena']:
+                usuario.contrasena = make_password(form.cleaned_data['contrasena'])
+                usuario.save()
+                messages.success(request, '¡Usuario registrado exitosamente!')
+                return redirect('mycoach:login')
+            else:
+                messages.error(request, 'Las contraseñas no coinciden')
+    else:
+        form = RegistroForm()
+    return render(request, 'registro_usuario.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-
-            # Verifica si el usuario existe en la base de datos
+            email = form.cleaned_data['email']
+            contrasena = form.cleaned_data['contrasena']
             try:
-                user = User.objects.get(username=username)
-                if user.check_password(password):
-                    login(request, user)  # Inicia sesión si la contraseña es correcta
-                    return redirect('index')  # Redirige a la página principal o la que prefieras
+                usuario = Usuario.objects.get(email=email)
+                if check_password(contrasena, usuario.contrasena):
+                    request.session['usuario_id'] = usuario.id
+                    return redirect('index')
                 else:
-                    error_message = "Contraseña incorrecta."
-            except User.DoesNotExist:
-                error_message = "El usuario no existe."
-
-            return render(request, 'registration/login.html', {'form': form, 'error': error_message})
+                    messages.error(request, 'Contraseña incorrecta')
+            except Usuario.DoesNotExist:
+                messages.error(request, 'Usuario no encontrado')
     else:
-        form = AuthenticationForm()
-    
+        form = LoginForm()
     return render(request, 'registration/login.html', {'form': form})
 
 
@@ -123,17 +99,6 @@ def cerrar_sesion(request):
 
 
 
-def agregar_valoracion(request):
-    today = timezone.now().date()  # Obtiene la fecha actual
-    if request.method == 'POST':
-        form = ValoracionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # Redirige o muestra un mensaje de éxito
-    else:
-        form = ValoracionForm(initial={'fecha_valoracion': today})  # Establece la fecha de hoy como predeterminada
-
-    return render(request, 'agregar_valoracion.html', {'form': form})
 
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -151,10 +116,6 @@ def lista_rutinas(request):
         'titulo': 'Listado de Rutinas'
     }
     return render(request, 'rutinas/rutinas.html', context)
-
-
-
-
 
 
 @login_required
@@ -278,3 +239,43 @@ def eliminar_nutricion(request, pk):
     
     # Mostrar una confirmación de eliminación si la solicitud es GET
     return render(request, 'confirmar_eliminar.html', {'objeto': nutricion})
+
+
+
+@login_required
+def agregar_valoracion(request):
+    if request.method == 'POST':
+        form = ValoracionPersonalForm(request.POST)
+        if form.is_valid():
+            valoracion = form.save(commit=False)
+            valoracion.usuario = request.user  # Asigna la valoración al usuario actual
+            valoracion.save()
+            messages.success(request, 'Valoración personal agregada exitosamente.')
+            return redirect('mycoach:usuarios')  # Redirige a la página de información personal
+    else:
+        form = ValoracionPersonalForm()
+
+    return render(request, 'editar_agregar_valoracion.html', {'form': form, 'titulo': 'Agregar Valoración Personal'})
+
+@login_required
+def editar_valoracion(request, pk):
+    valoracion = get_object_or_404(ValoracionPersonal, pk=pk, usuario=request.user)
+    if request.method == 'POST':
+        form = ValoracionPersonalForm(request.POST, instance=valoracion)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Valoración personal actualizada exitosamente.')
+            return redirect('mycoach:usuarios')  # Redirige a la página de información personal
+    else:
+        form = ValoracionPersonalForm(instance=valoracion)
+
+    return render(request, 'editar_agregar_valoracion.html', {'form': form, 'titulo': 'Editar Valoración Personal'})
+
+@login_required
+def ver_valoracion(request, pk):
+    valoracion = get_object_or_404(ValoracionPersonal, pk=pk, usuario=request.user)
+
+    return render(request, 'ver_valoracion.html', {
+        'valoracion': valoracion,
+        'titulo': 'Detalle de Valoración Personal'
+    })

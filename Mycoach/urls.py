@@ -9,7 +9,7 @@ urlpatterns = [
     path('mycoach/', views.mi_informacion, name='index'),
     path('registrar_usuario/', views.registrar_usuario, name='crear_usuario'),
     path('login/', views.login_view, name='login'),
-    path('logout/', cerrar_sesion, name='logout'),
+    path('logout/', views.logout, name='logout'),
     path('agregar_valoracion/', views.agregar_valoracion, name='agregar_valoraciones'),
     path('rutinas/', views.lista_rutinas, name='lista_rutinas'),
     path('rutinas/asignar/', views.asignar_rutina, name='asignar_rutina'),
@@ -19,5 +19,8 @@ urlpatterns = [
     path('planes-nutricionales/asignar/', views.asignar_plan_nutricional, name='asignar_plan_nutricional'),
     path('planes-nutricionales/editar/<int:pk>/', views.editar_nutricion, name='editar_plan_nutricional'),
     path('planes-nutricionales/eliminar/<int:pk>/', views.eliminar_nutricion, name='eliminar_plan_nutricional'),
+    path('valoraciones/<int:pk>/', views.ver_valoracion, name='ver_valoraciones'),   
+    path('valoraciones/agregar/', views.agregar_valoracion, name='agregar_valoracion'),
+    path('valoraciones/editar/<int:pk>/', views.editar_valoracion, name='editar_valoracion'),
 
 ]

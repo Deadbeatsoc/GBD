@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ titulo }}</h2>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Fecha de Valoración:</strong> {{ valoracion.fecha_valoracion }}</p>
+            <p><strong>Masa Corporal:</strong> {{ valoracion.masa_corporal }}</p>
+            <p><strong>Grasa Corporal:</strong> {{ valoracion.grasa_corporal }}</p>
+            <p><strong>Agua Corporal:</strong> {{ valoracion.agua_corporal }}</p>
+        </div>
+    </div>
+    <a href="{% url 'mycoach:mi_informacion_personal' %}" class="btn btn-secondary mt-3">Regresar</a>
+</div>
+{% endblock %}

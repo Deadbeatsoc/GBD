@@ -1,97 +1,111 @@
-{% load static %}
+<!-- templates/usuarios/registro.html -->
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Usuario</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f538a0, #5f2eea);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: Arial, sans-serif;
-        }
-        .register-container {
-            background-color: #2b2b44;
-            border-radius: 20px;
-            padding: 30px;
-            width: 350px;
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
-        }
-        .register-container h2 {
-            text-align: center;
-            color: #fff;
-            margin-bottom: 30px;
-        }
-        .register-container input[type="text"],
-        .register-container input[type="email"],
-        .register-container input[type="password"],
-        .register-container input[type="date"],
-        .register-container select {
-            background-color: #3b3b52;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            padding: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-        .register-container .form-check-input {
-            background-color: #3b3b52;
-            border: none;
-        }
-        .register-container .btn-register {
-            background: linear-gradient(135deg, #f538a0, #5f2eea);
-            border: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 20px;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .register-container .btn-register:hover {
-            background: linear-gradient(135deg, #5f2eea, #f538a0);
-        }
-        .terms {
-            color: #fff;
-        }
-    </style>
-</head>
-<body>
-    <div class="register-container">
-        <h2>Registro</h2>
-        <form method="post">
-            {% csrf_token %}
-            <form method="post">
-                {% csrf_token %}
-                <input type="text" name="nombre" placeholder="Nombre" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="contrasena" placeholder="Contraseña" required>
-                <select name="rol">
-                    <option value="Administrador">Administrador</option>
-                    <option value="Entrenador">Entrenador</option>
-                    <option value="Deportista">Deportista</option>
-                </select>
-                <input type="number" name="edad" placeholder="Edad" required>
-                <select name="sexo">
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                    <option value="Otro">Otro</option>
-                </select>
-                <input type="decimal" name="peso" placeholder="Peso" required>
-                <input type="decimal" name="altura" placeholder="Altura" required>
-                <input type="date" name="fecha_nacimiento" required>
-                <button type="submit">Crear Usuario</button>
-            </form>
-            
-        </form>
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Registro de Usuario</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if messages %}
+                        <div class="alert alert-danger">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <!-- Nombre -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre:</label>
+                                {{ form.nombre }}
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+                                {{ form.email }}
+                            </div>
+
+                            <!-- Rol -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.rol.id_for_label }}" class="form-label">Rol:</label>
+                                {{ form.rol }}
+                            </div>
+
+                            <!-- Edad -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.edad.id_for_label }}" class="form-label">Edad:</label>
+                                {{ form.edad }}
+                            </div>
+
+                            <!-- Sexo -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.sexo.id_for_label }}" class="form-label">Sexo:</label>
+                                {{ form.sexo }}
+                            </div>
+
+                            <!-- Peso Actual -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.peso_actual.id_for_label }}" class="form-label">Peso Actual (kg):</label>
+                                {{ form.peso_actual }}
+                            </div>
+
+                            <!-- Altura Actual -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.altura_actual.id_for_label }}" class="form-label">Altura Actual (m):</label>
+                                {{ form.altura_actual }}
+                            </div>
+
+                            <!-- Fecha de Nacimiento -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de Nacimiento:</label>
+                                {{ form.fecha_nacimiento }}
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.contrasena.id_for_label }}" class="form-label">Contraseña:</label>
+                                {{ form.contrasena }}
+                            </div>
+
+                            <!-- Confirmar Contraseña -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.confirmar_contrasena.id_for_label }}" class="form-label">Confirmar Contraseña:</label>
+                                {{ form.confirmar_contrasena }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-primary">Registrar</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p>¿Ya tienes una cuenta? <a href="{% url 'mycoach:login' %}">Iniciar Sesión</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

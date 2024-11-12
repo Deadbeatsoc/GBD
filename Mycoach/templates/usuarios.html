@@ -19,27 +19,32 @@
         <thead>
             <tr>
                 <th>Fecha de Valoración</th>
-                <th>Masa Segmental</th>
+                <th>Masa Corporal</th>
                 <th>Grasa Corporal</th>
                 <th>Agua Corporal</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for valoracion in valoraciones %}
                 <tr>
-                    <td>{{ valoracion.FechaValoracion }}</td>
-                    <td>{{ valoracion.MasaSegmental }}</td>
-                    <td>{{ valoracion.GrasaCorporal }}</td>
-                    <td>{{ valoracion.AguaCorporal }}</td>
+                    <td>{{ valoracion.fecha_valoracion }}</td>
+                    <td>{{ valoracion.masa_corporal }}</td>
+                    <td>{{ valoracion.grasa_corporal }}</td>
+                    <td>{{ valoracion.agua_corporal }}</td>
+                    <td>
+                        <a href="{% url 'mycoach:editar_valoracion' valoracion.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'mycoach:ver_valoraciones' valoracion.id %}" class="btn btn-sm btn-info">Ver</a>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="4">No tienes valoraciones personales registradas.</td>
+                    <td colspan="5">No tienes valoraciones personales registradas.</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <a href="{% url 'mycoach:agregar_valoraciones' %}" class="btn btn-primary mt-3">Agregar Valoración</a>
+    <a href="{% url 'mycoach:agregar_valoracion' %}" class="btn btn-primary mt-3">Agregar Valoración Personal</a>
 </div>
 {% endblock %}

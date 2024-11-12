@@ -41,7 +41,7 @@ class NutricionAdmin(admin.ModelAdmin):
 
 @admin.register(ValoracionPersonal)
 class ValoracionPersonalAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'fecha_valoracion', 'masa_segmental', 'grasa_corporal', 'agua_corporal')
+    list_display = ('usuario', 'fecha_valoracion', 'masa_corporal', 'grasa_corporal', 'agua_corporal')
     search_fields = ('usuario__nombre',)
     list_filter = ('fecha_valoracion',)
 

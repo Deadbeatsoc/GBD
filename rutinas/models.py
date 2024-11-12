@@ -1,6 +1,25 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+from django.utils import timezone
 
-class Usuario(models.Model):
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email, nombre, contrasena=None, **extra_fields):
+        if not email:
+            raise ValueError('El usuario debe tener un email')
+        email = self.normalize_email(email)
+        usuario = self.model(email=email, nombre=nombre, **extra_fields)
+        usuario.set_password(contrasena)
+        usuario.save(using=self._db)
+        return usuario
+
+    def create_superuser(self, email, nombre, contrasena=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        
+        return self.create_user(email, nombre, contrasena, **extra_fields)
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
     ROL_CHOICES = [
         ('Administrador', 'Administrador'),
         ('Entrenador', 'Entrenador'),
@@ -14,18 +33,28 @@ class Usuario(models.Model):
 
     nombre = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    contrasena = models.CharField(max_length=255)
     rol = models.CharField(max_length=15, choices=ROL_CHOICES)
     edad = models.IntegerField()
     sexo = models.CharField(max_length=10, choices=SEXO_CHOICES)
     peso_actual = models.DecimalField(max_digits=5, decimal_places=2)
     altura_actual = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
     fecha_nacimiento = models.DateField()
-    fecha_registro = models.DateTimeField(auto_now_add=True)
+    fecha_registro = models.DateTimeField(default=timezone.now)
+    password = models.CharField(max_length=128, default='defaultpassword')
+
+    
+    # Campos requeridos para el modelo de usuario en Django
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    # Configuración de USERNAME_FIELD y REQUIRED_FIELDS
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['nombre', 'rol', 'edad', 'sexo']
+
+    objects = UsuarioManager()
 
     def __str__(self):
         return self.nombre
-
 
 class TipoRutina(models.Model):
     nombre_tipo = models.CharField(max_length=100)
@@ -84,7 +113,7 @@ class Nutricion(models.Model):
 class ValoracionPersonal(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     fecha_valoracion = models.DateField()
-    masa_segmental = models.DecimalField(max_digits=5, decimal_places=2)
+    masa_corporal = models.DecimalField(max_digits=5, decimal_places=2)
     grasa_corporal = models.DecimalField(max_digits=5, decimal_places=2)
     agua_corporal = models.DecimalField(max_digits=5, decimal_places=2)
 

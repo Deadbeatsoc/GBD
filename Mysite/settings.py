@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     'Mycoach',
     'rutinas',
     'widget_tweaks',
-
-    
 ]
+
+AUTH_USER_MODEL = 'rutinas.Usuario'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
