@@ -1,10 +1,119 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<<<<<<< Updated upstream
   <h2>Register</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Register</button>
   </form>
+=======
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Registro de Usuario</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if messages %}
+                        <div class="alert alert-danger">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <!-- Nombre -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre:</label>
+                                {{ form.nombre }}
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+                                {{ form.email }}
+                            </div>
+
+                            <!-- Rol -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.rol.id_for_label }}" class="form-label">Rol:</label>
+                                {{ form.rol }}
+                            </div>
+
+                            <!-- Edad -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.edad.id_for_label }}" class="form-label">Edad:</label>
+                                {{ form.edad }}
+                            </div>
+
+                            <!-- Sexo -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.sexo.id_for_label }}" class="form-label">Sexo:</label>
+                                {{ form.sexo }}
+                            </div>
+
+                            <!-- Peso Actual -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.peso_actual.id_for_label }}" class="form-label">Peso Actual (kg):</label>
+                                {{ form.peso_actual }}
+                            </div>
+
+                            <!-- Altura Actual -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.altura_actual.id_for_label }}" class="form-label">Altura Actual (m):</label>
+                                {{ form.altura_actual }}
+                            </div>
+
+                            <!-- Fecha de Nacimiento -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de Nacimiento (AAAA-MM-DD):</label>
+                                {{ form.fecha_nacimiento }}
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.contrasena.id_for_label }}" class="form-label">Contraseña:</label>
+                                {{ form.contrasena }}
+                            </div>
+
+                            <!-- Confirmar Contraseña -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.confirmar_contrasena.id_for_label }}" class="form-label">Confirmar Contraseña:</label>
+                                {{ form.confirmar_contrasena }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-primary">Registrar</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p>¿Ya tienes una cuenta? <a href="{% url 'mycoach:login' %}">Iniciar Sesión</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+>>>>>>> Stashed changes
 {% endblock %}

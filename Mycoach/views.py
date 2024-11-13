@@ -1,4 +1,4 @@
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.shortcuts import redirect, render
 from Mysite.forms import  ComidaForm, LoginForm, RegistrationForm, EjercicioForm
 from rutinas.models import Nutricion, PlanNutricional, Rutina

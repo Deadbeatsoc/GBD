@@ -1,4 +1,5 @@
 from django import forms
+<<<<<<< Updated upstream
 from rutinas.models import EjercicioEnRutina, Nutricion,ValoracionPersonal  # Para encriptar la contraseña
 from rutinas.models import User,Usuario
 
@@ -28,7 +29,32 @@ class RegistrationForm(UserCreationForm):
             usuario.save()
         return user
     
+=======
+from rutinas.models import Ejercicio, Nutricion, PlanNutricional, Rutina, Usuario  # Para encriptar la contraseña
+from django.contrib.auth.hashers import make_password
+from django import forms
+from rutinas.models import Usuario
 
+
+class RegistroForm(forms.ModelForm):
+    contrasena = forms.CharField(widget=forms.PasswordInput())
+    confirmar_contrasena = forms.CharField(widget=forms.PasswordInput())
+>>>>>>> Stashed changes
+
+    class Meta:
+        model = Usuario
+        fields = ['nombre', 'email', 'rol', 'edad', 'sexo', 'peso_actual', 'altura_actual', 'fecha_nacimiento', 'contrasena', 'confirmar_contrasena']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        contrasena = cleaned_data.get("contrasena")
+        confirmar_contrasena = cleaned_data.get("confirmar_contrasena")
+
+        if contrasena != confirmar_contrasena:
+            raise forms.ValidationError("Las contraseñas no coinciden.")
+
+        return cleaned_data
+    
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
