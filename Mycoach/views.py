@@ -60,30 +60,37 @@ def ver_nutriciones(request):
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import UserCreationForm
+
 
 
 def registrar_usuario(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('index')
     else:
-        form = RegistrationForm()
+        form = UserCreationForm()
     return render(request, 'registro_usuario.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             return redirect('index')
         else:
-            return render(request, 'registration/login.html', {'error': 'Nombre de usuario o contraseña incorrectos'})
+            error_message = 'Invalid username or password'
     else:
-        return render(request, 'registration/login.html')
+        error_message = ''
+    return render(request, 'registration/login.html', {'error_message': error_message})
 
 def cerrar_sesion(request):
     logout(request)

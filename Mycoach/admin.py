@@ -8,48 +8,33 @@ from rutinas.models import (
     DetallePlanNutricional, HistorialRutina, ComentarioEntrenamiento,
     ParticipanteRutina, DetalleRutina,Usuario
 )
-
 @admin.register(Usuario)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'get_role', 'edad', 'fecha_registro', 'user__is_active', 'user__is_staff')
-    list_filter = ('rol', 'user__is_active', 'user__is_staff', 'fecha_registro')
-    search_fields = ('user__username', 'user__email')
+    list_display = ('username', 'rol', 'edad', 'sexo', 'peso_actual', 'altura_actual', 'fecha_nacimiento', 'fecha_registro')
+    list_filter = ('rol', 'fecha_registro')
+    search_fields = ('user__username',)
     ordering = ('-fecha_registro',)
     readonly_fields = ('fecha_registro',)
     fieldsets = (
         ('Personal Information', {
-            'fields': ('user__username', 'user__email', 'fecha_nacimiento', 'edad', 'sexo')
+            'fields': ('user', 'rol', 'edad', 'sexo', 'fecha_nacimiento')
         }),
         ('Measurements', {
             'fields': ('peso_actual', 'altura_actual')
         }),
-        ('Role and Permissions', {
-            'fields': ('rol', 'user__is_active', 'user__is_staff', 'user__is_superuser')
-        }),
     )
-
-    def get_role(self, obj):
-        return obj.rol
-    get_role.short_description = 'Role'
 
     def username(self, obj):
         return obj.user.username
-    username.short_description = 'Username'
-
-    def email(self, obj):
-        return obj.user.email
-    email.short_description = 'Email'
 
     def save_model(self, request, obj, form, change):
-        if change:
-            # Update the related User object
-            obj.user.username = obj.user.username
-            obj.user.email = obj.user.email
-            obj.user.is_active = obj.user.is_active
-            obj.user.is_staff = obj.user.is_staff
-            obj.user.save()
+        # Update the related User object
+        obj.user.username = obj.user.username
+        obj.user.email = obj.user.email
+        obj.user.save()
         super().save_model(request, obj, form, change)
-
+        
+                
 # Customize admin site
 admin.site.site_header = "Training Management System"
 admin.site.site_title = "Administration Panel"
