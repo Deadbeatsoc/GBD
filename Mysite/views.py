@@ -1,10 +1,8 @@
 from django.shortcuts import redirect, render
-from rutinas.models import  Nutricion, Usuario   
+from rutinas.models import  Nutricion
 from .forms import  ComidaForm
-from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout as auth_logout
-from .forms import LoginForm
 
 
 

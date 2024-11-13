@@ -30,8 +30,8 @@
             <a class="nav-item nav-link" href="{% url 'mycoach:crear_usuario' %}">Crear Nuevo Usuario</a>
             
             <!-- Mostrar nombre de usuario autenticado -->
-            {% if user.is_authenticated %}
-                <span class="navbar-text">Bienvenido, {{ user.username }}!</span>
+            {% if request.user.is_authenticated %}
+                <span class="navbar-text">Bienvenido, {{ request.user.username }}!</span>
                 <a class="nav-item nav-link" href="{% url 'mycoach:logout' %}">Cerrar Sesión</a>
             {% else %}
                 <a class="nav-item nav-link" href="{% url 'mycoach:login' %}">Iniciar Sesión</a>

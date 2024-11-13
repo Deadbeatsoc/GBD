@@ -1,15 +1,16 @@
 from pyexpat.errors import messages
 from django.shortcuts import redirect, render
-from Mysite.forms import AsignarPlanNutricionalForm, AsignarRutinaForm, ComidaForm, LoginForm, RegistroForm
-from rutinas.models import Nutricion, PlanNutricional, Rutina, Usuario
+from Mysite.forms import  ComidaForm, LoginForm, RegistrationForm, EjercicioForm
+from rutinas.models import Nutricion, PlanNutricional, Rutina
 from django.contrib.auth import logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
-from rutinas.models import Usuario
 from rutinas.models import ValoracionPersonal
 from django.contrib.auth.decorators import login_required
 from .forms import ValoracionPersonalForm
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth import authenticate, login
+from rutinas.models import User
+
 
 
 
@@ -24,8 +25,8 @@ def index(request):
 def mi_informacion(request):
     usuario = request.user  # Obtener el usuario autenticado
     try:
-        info_usuario = Usuario.objects.get(id=usuario.id)
-    except Usuario.DoesNotExist:
+        info_usuario = User.objects.get(id=usuario.id)
+    except User.DoesNotExist:
         return redirect('mycoach:index')  # Redirigir si no encuentra el usuario
 
     # Cargar las valoraciones del usuario
@@ -55,43 +56,41 @@ def ver_nutriciones(request):
     return render(request, 'ver_nutriciones.html', {'nutriciones': nutriciones})
 
 
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import UserCreationForm
+
+
+
 def registrar_usuario(request):
     if request.method == 'POST':
-        form = RegistroForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
-            usuario = form.save(commit=False)
-            # Verificar que las contraseñas coincidan
-            if form.cleaned_data['contrasena'] == form.cleaned_data['confirmar_contrasena']:
-                usuario.contrasena = make_password(form.cleaned_data['contrasena'])
-                usuario.save()
-                messages.success(request, '¡Usuario registrado exitosamente!')
-                return redirect('mycoach:login')
-            else:
-                messages.error(request, 'Las contraseñas no coinciden')
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('index')
     else:
-        form = RegistroForm()
+        form = UserCreationForm()
     return render(request, 'registro_usuario.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            contrasena = form.cleaned_data['contrasena']
-            try:
-                usuario = Usuario.objects.get(email=email)
-                if check_password(contrasena, usuario.contrasena):
-                    request.session['usuario_id'] = usuario.id
-                    return redirect('index')
-                else:
-                    messages.error(request, 'Contraseña incorrecta')
-            except Usuario.DoesNotExist:
-                messages.error(request, 'Usuario no encontrado')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            error_message = 'Invalid username or password'
     else:
-        form = LoginForm()
-    return render(request, 'registration/login.html', {'form': form})
-
-
+        error_message = ''
+    return render(request, 'registration/login.html', {'error_message': error_message})
 
 def cerrar_sesion(request):
     logout(request)
@@ -104,8 +103,7 @@ def cerrar_sesion(request):
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from rutinas.models import Rutina, PlanNutricional, Usuario
-from  Mysite.forms import AsignarRutinaForm, AsignarPlanNutricionalForm
+from rutinas.models import Rutina, PlanNutricional
 
 # Vistas para Rutinas
 @login_required
@@ -118,34 +116,18 @@ def lista_rutinas(request):
     return render(request, 'rutinas/rutinas.html', context)
 
 
-@login_required
-def asignar_rutina(request):
-    if request.method == 'POST':
-        form = AsignarRutinaForm(request.POST)
-        if form.is_valid():
-            rutina = form.save()
-            messages.success(request, 'Rutina asignada exitosamente')
-            return redirect('rutinas')
-    else:
-        form = AsignarRutinaForm()
-    
-    context = {
-        'form': form,
-        'titulo': 'Asignar Nueva Rutina'
-    }
-    return render(request, 'asignar_rutinas.html', context)
 
 @login_required
 def editar_rutina(request, pk):
     rutina = get_object_or_404(Rutina, pk=pk)
     if request.method == 'POST':
-        form = AsignarRutinaForm(request.POST, instance=rutina)
+        form = EjercicioForm(request.POST, instance=rutina)
         if form.is_valid():
             form.save()
             messages.success(request, 'Rutina actualizada exitosamente')
             return redirect('rutinas')
     else:
-        form = AsignarRutinaForm(instance=rutina)
+        form = EjercicioForm(instance=rutina)
     
     context = {
         'form': form,
@@ -172,22 +154,6 @@ def lista_planes_nutricionales(request):
     }
     return render(request, 'lista_planes.html', context)
 
-@login_required
-def asignar_plan_nutricional(request):
-    if request.method == 'POST':
-        form = AsignarPlanNutricionalForm(request.POST)
-        if form.is_valid():
-            plan = form.save()
-            messages.success(request, 'Plan nutricional asignado exitosamente')
-            return redirect('ver_nutriciones')
-    else:
-        form = AsignarPlanNutricionalForm()
-    
-    context = {
-        'form': form,
-        'titulo': 'Asignar Nuevo Plan Nutricional'
-    }
-    return render(request,'asignar_plan_nutricional.html', context)
 
 
 @login_required
@@ -248,7 +214,7 @@ def agregar_valoracion(request):
         form = ValoracionPersonalForm(request.POST)
         if form.is_valid():
             valoracion = form.save(commit=False)
-            valoracion.usuario = request.user  # Asigna la valoración al usuario actual
+            valoracion.user = request.user  # Asigna la valoración al usuario actual
             valoracion.save()
             messages.success(request, 'Valoración personal agregada exitosamente.')
             return redirect('mycoach:usuarios')  # Redirige a la página de información personal

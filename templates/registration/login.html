@@ -1,49 +1,16 @@
-<!-- templates/usuarios/login.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="text-center">Iniciar Sesión</h2>
-                </div>
-                <div class="card-body">
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        
-                        {% if messages %}
-                        <div class="alert alert-danger">
-                            {% for message in messages %}
-                                {{ message }}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
-                            {{ form.email }}
-                        </div>
-
-                        <!-- Contraseña -->
-                        <div class="mb-3">
-                            <label for="{{ form.contrasena.id_for_label }}" class="form-label">Contraseña:</label>
-                            {{ form.contrasena }}
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-                        </div>
-
-                        <div class="text-center mt-3">
-                            <p>¿No tienes una cuenta? <a href="{% url 'mycoach:crear_usuario' %}">Regístrate</a></p>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+  <h2>Login</h2>
+  {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">Login</button>
+  </form>
 {% endblock %}
