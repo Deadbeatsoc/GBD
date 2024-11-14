@@ -8,65 +8,298 @@
     <style>
         .routine-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
+            padding: 0 20px;
+        }
+        .action-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 70%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
         }
         table {
             border-collapse: collapse;
-            margin: 0 20px;
-            width: 60%;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px 0;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
+            text-align: left;
         }
         th {
             background-color: #d1e7dd;
-            text-align: center;
         }
-        td {
-            text-align: center;
+        .exercise-list {
+            margin-top: 20px;
+            display: none;
         }
-        .header {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
+        .form-group {
+            margin-bottom: 15px;
         }
-        .no-data {
-            text-align: center;
-            padding: 10px;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Rutinas de entrenamiento</h1>
-    </div>
     <div class="routine-container">
+        <h1>Rutinas de entrenamiento</h1>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="showModal('addExistingRoutineModal')">Agregar Rutina Existente</button>
+            <button class="btn btn-success" onclick="showModal('createRoutineModal')">Crear Nueva Rutina</button>
+            <button class="btn btn-info" onclick="showModal('createExerciseModal')">Crear Ejercicio</button>
+        </div>
+
+        <!-- Tabla de rutinas -->
         <table>
             <thead>
                 <tr>
                     <th>Fecha de Inicio</th>
                     <th>Nombre de Rutina</th>
+                    <th>Tipo</th>
+                    <th>Nivel</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% if rutinas %}
                     {% for rutina in rutinas %}
                     <tr>
-                        <td>{{ rutina.fecha_inicio|date:"Y-m-d" }}</td>
-                        <td>{{ rutina.nombre_rutina }}</td>
+                        <td>{{ rutina.fecha_creacion|date:"Y-m-d" }}</td>
+                        <td>{{ rutina.nombre }}</td>
+                        <td>{{ rutina.tipo }}</td>
+                        <td>{{ rutina.nivel }}</td>
+                        <td>
+                            <button class="btn btn-info" onclick="verEjercicios({{ rutina.id }})">Ver Ejercicios</button>
+                        </td>
+                    </tr>
+                    <tr id="ejercicios-{{ rutina.id }}" class="exercise-list">
+                        <td colspan="5">
+                            <div class="ejercicios-container">
+                                <h4>Ejercicios de la rutina</h4>
+                                <ul>
+                                    {% for ejercicio in rutina.ejercicios.all %}
+                                    <li>
+                                        {{ ejercicio.nombre_ejercicio }} - 
+                                        {{ ejercicio.series }}x{{ ejercicio.repeticiones }}
+                                        <button class="btn btn-success btn-sm" onclick="agregarEjercicioARutina({{ ejercicio.id }})">
+                                            Agregar a mi rutina
+                                        </button>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="2" class="no-data">No hay rutinas registradas.</td>
+                        <td colspan="5" class="no-data">No hay rutinas registradas.</td>
                     </tr>
                 {% endif %}
             </tbody>
         </table>
+
+        <!-- Modal para agregar rutina existente -->
+        <div id="addExistingRoutineModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addExistingRoutineModal')">&times;</span>
+                <h2>Agregar Rutina Existente</h2>
+                <form action="{% url 'rutinas:agregar_rutina_existente' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="rutina_id">Seleccionar Rutina:</label>
+                        <select name="rutina_id" required>
+                            {% for rutina in todas_rutinas %}
+                                <option value="{{ rutina.id }}">{{ rutina.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Rutina</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para crear nueva rutina -->
+        <div id="createRoutineModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('createRoutineModal')">&times;</span>
+                <h2>Crear Nueva Rutina</h2>
+                <form action="{% url 'rutinas:crear_rutina' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo:</label>
+                        <select name="tipo" required>
+                            {% for tipo in tipos_rutina %}
+                                <option value="{{ tipo.id }}">{{ tipo.nombre_tipo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nivel">Nivel:</label>
+                        <select name="nivel" required>
+                            <option value="Principiante">Principiante</option>
+                            <option value="Intermedio">Intermedio</option>
+                            <option value="Avanzado">Avanzado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Descripción:</label>
+                        <textarea name="descripcion" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Crear Rutina</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para crear ejercicio -->
+        <div id="createExerciseModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('createExerciseModal')">&times;</span>
+                <h2>Crear Nuevo Ejercicio</h2>
+                <form action="{% url 'rutinas:crear_ejercicio' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="rutina">Rutina:</label>
+                        <select name="rutina" required>
+                            {% for rutina in todas_rutinas %}
+                                <option value="{{ rutina.id }}">{{ rutina.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre_ejercicio">Nombre del ejercicio:</label>
+                        <input type="text" name="nombre_ejercicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcion">Descripción:</label>
+                        <textarea name="descripcion" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="series">Series:</label>
+                        <input type="number" name="series" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="repeticiones">Repeticiones:</label>
+                        <input type="number" name="repeticiones" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="descanso">Descanso (minutos):</label>
+                        <input type="number" name="descanso" required min="0" step="0.5">
+                    </div>
+                    <button type="submit" class="btn btn-info">Crear Ejercicio</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <a href="{% url 'index' %}" style="display: block; text-align: center; margin-top: 20px;">Regresar a la página principal</a>
+
+    <script>
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function verEjercicios(rutinaId) {
+            const ejerciciosRow = document.getElementById(`ejercicios-${rutinaId}`);
+            if (ejerciciosRow.style.display === "none" || !ejerciciosRow.style.display) {
+                ejerciciosRow.style.display = "table-row";
+            } else {
+                ejerciciosRow.style.display = "none";
+            }
+        }
+
+        function agregarEjercicioARutina(ejercicioId) {
+            // Hacer una petición AJAX para agregar el ejercicio a la rutina del usuario
+            fetch('{% url "rutinas:agregar_ejercicio_rutina" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    ejercicio_id: ejercicioId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Ejercicio agregado a tu rutina exitosamente');
+                } else {
+                    alert('Error al agregar el ejercicio');
+                }
+            });
+        }
+
+        // Cerrar modales cuando se hace clic fuera de ellos
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+
+    <a href="{% url 'index' %}" class="btn btn-primary" style="display: block; width: fit-content; margin: 20px auto;">
+        Regresar a la página principal
+    </a>
 </body>
 </html>
 {% endblock %}

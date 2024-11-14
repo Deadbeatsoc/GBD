@@ -1,0 +1,203 @@
+{# lista_rutinas.html #}
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Mis Rutinas</h1>
+        <a href="{% url 'crear_rutina' %}" class="btn btn-primary">Crear Nueva Rutina</a>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Mis Rutinas -->
+        <div class="col-md-6 mb-4">
+            <h3>Mis Rutinas</h3>
+            {% for rutina in rutinas %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ rutina.nombre }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Tipo: {{ rutina.tipo }} | Nivel: {{ rutina.nivel }}
+                        </small>
+                    </p>
+                    <p class="card-text">{{ rutina.descripcion }}</p>
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-info btn-sm ver-ejercicios" 
+                                data-rutina-id="{{ rutina.id }}">
+                            Ver Ejercicios
+                        </button>
+                        <a href="{% url 'crear_ejercicio' %}?rutina={{ rutina.id }}" 
+                           class="btn btn-success btn-sm">
+                            Agregar Ejercicio
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No tienes rutinas creadas aún.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Rutinas Disponibles -->
+        <div class="col-md-6">
+            <h3>Rutinas Disponibles</h3>
+            {% for rutina in todas_rutinas %}
+            {% if rutina.usuario_creador != request.user %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ rutina.nombre }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Tipo: {{ rutina.tipo }} | Nivel: {{ rutina.nivel }}
+                        </small>
+                    </p>
+                    <p class="card-text">{{ rutina.descripcion }}</p>
+                    <form action="{% url 'agregar_rutina_existente' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="rutina" value="{{ rutina.id }}">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            Agregar a Mis Rutinas
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver ejercicios -->
+<div class="modal fade" id="ejerciciosModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ejercicios de la Rutina</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="ejercicios-lista" class="list-group">
+                    <!-- Los ejercicios se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.ver-ejercicios').forEach(button => {
+    button.addEventListener('click', async () => {
+        const rutinaId = button.dataset.rutinaId;
+        try {
+            const response = await fetch(`/rutinas/ver-ejercicios/${rutinaId}/`);
+            const data = await response.json();
+            
+            const ejerciciosLista = document.getElementById('ejercicios-lista');
+            ejerciciosLista.innerHTML = '';
+            
+            data.ejercicios.forEach(ejercicio => {
+                ejerciciosLista.innerHTML += `
+                    <div class="list-group-item" data-ejercicio-id="${ejercicio.id}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">${ejercicio.nombre_ejercicio}</h5>
+                                <p class="mb-1">Series: ${ejercicio.series} | Repeticiones: ${ejercicio.repeticiones}</p>
+                                <small>Descanso: ${ejercicio.descanso}s</small>
+                                ${ejercicio.notas ? `<p class="mb-0"><small class="text-muted">Notas: ${ejercicio.notas}</small></p>` : ''}
+                            </div>
+                            <form action="{% url 'eliminar_ejercicio' 0 %}".replace('0', ejercicio.id) method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const modal = new bootstrap.Modal(document.getElementById('ejerciciosModal'));
+            modal.show();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+});
+
+// Hacer los ejercicios ordenables
+const ejerciciosLista = document.getElementById('ejercicios-lista');
+new Sortable(ejerciciosLista, {
+    animation: 150,
+    onEnd: async function(evt) {
+        const ejercicios = Array.from(ejerciciosLista.children).map(
+            (item, index) => ({
+                id: item.dataset.ejercicioId,
+                orden: index + 1
+            })
+        );
+        
+        try {
+            const response = await fetch('/rutinas/actualizar-orden/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ ejercicios })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Error al actualizar el orden');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}
+
+{# crear_rutina.html #}
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Crear Nueva Rutina</h1>
+    
+    <form method="POST" class="mt-4">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-body">
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">
+                        {{ field.label }}
+                    </label>
+                    {{ field|add_class:"form-control" }}
+                    {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Crear Rutina</button>
+                    <a href="{% url 'lista_rutinas' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

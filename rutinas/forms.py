@@ -1,71 +1,48 @@
 from django import forms
-from .models import Rutina
+from rutinas.models import Rutina, EjercicioEnRutina, TipoRutina
+from datetime import timedelta
 
 class RutinaForm(forms.ModelForm):
+    duracion_estimada = forms.DurationField(
+        help_text="Formato: HH:MM:SS",
+        widget=forms.TextInput(attrs={'placeholder': '00:30:00'}),
+        initial=timedelta(minutes=30)
+    )
+    
     class Meta:
         model = Rutina
-        fields = [
-            'nombre',
-            'tipo',
-            'descripcion',
-            'nivel',
-            'duracion_estimada',
-            'calorias_estimadas',
-            'activa'
-        ]
+        fields = ['nombre', 'tipo', 'descripcion', 'nivel', 'duracion_estimada', 'calorias_estimadas']
         widgets = {
-            'nombre': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Nombre de la rutina'
-            }),
-            'tipo': forms.Select(attrs={
-                'class': 'form-control'
-            }),
-            'descripcion': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Describe la rutina y sus objetivos'
-            }),
-            'nivel': forms.Select(attrs={
-                'class': 'form-control'
-            }),
-            'duracion_estimada': forms.TimeInput(attrs={
-                'class': 'form-control',
-                'type': 'time',
-                'step': '60',  # Para permitir selección por minutos
-                'placeholder': 'HH:MM'
-            }),
-            'calorias_estimadas': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '0',
-                'placeholder': 'Calorías estimadas a quemar'
-            }),
-            'activa': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            })
+            'descripcion': forms.Textarea(attrs={'rows': 4}),
+            'calorias_estimadas': forms.NumberInput(attrs={'min': 0}),
         }
 
     def __init__(self, *args, **kwargs):
-        usuario = kwargs.pop('usuario', None)
-        super().__init__(*args, **kwargs)
-        if usuario:
-            self.instance.usuario_creador = usuario
+        user = kwargs.pop('user', None)
+        super(RutinaForm, self).__init__(*args, **kwargs)
+        if user:
+            self.instance.usuario_creador = user
 
-    def clean_duracion_estimada(self):
-        duracion = self.cleaned_data.get('duracion_estimada')
-        if duracion:
-            # Verificar que la duración no sea excesiva (por ejemplo, más de 4 horas)
-            from datetime import timedelta
-            if duracion > timedelta(hours=4):
-                raise forms.ValidationError(
-                    "La duración estimada no puede ser mayor a 4 horas"
-                )
-        return duracion
+class EjercicioEnRutinaForm(forms.ModelForm):
+    descanso = forms.DurationField(
+        help_text="Formato: MM:SS",
+        widget=forms.TextInput(attrs={'placeholder': '01:30'}),
+        initial=timedelta(seconds=90)
+    )
+    
+    class Meta:
+        model = EjercicioEnRutina
+        fields = ['nombre_ejercicio', 'descripcion', 'series', 'repeticiones', 'descanso', 'notas']
+        widgets = {
+            'descripcion': forms.Textarea(attrs={'rows': 3}),
+            'notas': forms.Textarea(attrs={'rows': 2}),
+            'series': forms.NumberInput(attrs={'min': 1}),
+            'repeticiones': forms.NumberInput(attrs={'min': 1}),
+        }
 
-    def clean_calorias_estimadas(self):
-        calorias = self.cleaned_data.get('calorias_estimadas')
-        if calorias and calorias > 2000:
-            raise forms.ValidationError(
-                "Las calorías estimadas parecen muy altas. Por favor verifica."
-            )
-        return calorias
+class RutinaExistenteForm(forms.Form):
+    rutina = forms.ModelChoiceField(
+        queryset=Rutina.objects.filter(activa=True),
+        empty_label="Seleccione una rutina",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
