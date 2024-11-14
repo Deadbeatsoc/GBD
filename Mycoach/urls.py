@@ -16,8 +16,10 @@ urlpatterns = [
     path('planes-nutricionales/', views.lista_planes_nutricionales, name='lista_planes_nutricionales'),
     path('planes-nutricionales/editar/<int:pk>/', views.editar_nutricion, name='editar_plan_nutricional'),
     path('planes-nutricionales/eliminar/<int:pk>/', views.eliminar_nutricion, name='eliminar_plan_nutricional'),
-    path('valoraciones/<int:pk>/', views.ver_valoracion, name='ver_valoraciones'),   
+    path('valoraciones/<int:pk>/', views.valoraciones_view, name='ver_valoraciones'),   
     path('valoraciones/agregar/', views.agregar_valoracion, name='agregar_valoracion'),
     path('valoraciones/editar/<int:pk>/', views.editar_valoracion, name='editar_valoracion'),
+    path('valoraciones/historial/', views.historial_valoraciones, name='historial_valoraciones'),
+
 
 ]

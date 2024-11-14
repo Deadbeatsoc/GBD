@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Detalles de la Valoración</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="card-title">Información Principal</h5>
+                            <p><strong>Fecha:</strong> {{ valoracion.fecha_valoracion|date:"d/m/Y" }}</p>
+                            <p><strong>Masa Corporal:</strong> {{ valoracion.masa_corporal }} kg</p>
+                            <p><strong>Grasa Corporal:</strong> {{ valoracion.grasa_corporal }}%</p>
+                            <p><strong>Agua Corporal:</strong> {{ valoracion.agua_corporal }}%</p>
+                            <p><strong>IMC:</strong> {{ imc|floatformat:1 }} ({{ estado_imc }})</p>
+                        </div>
+                        
+                        {% if valoracion_anterior %}
+                        <div class="col-md-6">
+                            <h5 class="card-title">Comparación con valoración anterior</h5>
+                            <p><strong>Cambio en Masa:</strong> 
+                                {% with cambio_masa=valoracion.masa_corporal|sub:valoracion_anterior.masa_corporal %}
+                                <span class="{% if cambio_masa < 0 %}text-success{% elif cambio_masa > 0 %}text-danger{% endif %}">
+                                    {{ cambio_masa|floatformat:1 }} kg
+                                </span>
+                                {% endwith %}
+                            </p>
+                            <p><strong>Cambio en Grasa:</strong>
+                                {% with cambio_grasa=valoracion.grasa_corporal|sub:valoracion_anterior.grasa_corporal %}
+                                <span class="{% if cambio_grasa < 0 %}text-success{% elif cambio_grasa > 0 %}text-danger{% endif %}">
+                                    {{ cambio_grasa|floatformat:1 }}%
+                                </span>
+                                {% endwith %}
+                            </p>
+                            <p><strong>Cambio en Agua:</strong>
+                                {% with cambio_agua=valoracion.agua_corporal|sub:valoracion_anterior.agua_corporal %}
+                                <span class="{% if cambio_agua > 0 %}text-success{% elif cambio_agua < 0 %}text-danger{% endif %}">
+                                    {{ cambio_agua|floatformat:1 }}%
+                                </span>
+                                {% endwith %}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if valoracion.notas %}
+                    <div class="mt-4">
+                        <h5 class="card-title">Notas</h5>
+                        <p class="card-text">{{ valoracion.notas|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'mycoach:valoraciones' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        <div>
+                            <a href="{% url 'mycoach:editar_valoracion' valoracion.id %}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Interpretación</h5>
+                </div>
+                <div class="card-body">
+                    <h6>IMC ({{ imc|floatformat:1 }})</h6>
+                    <p class="mb-3">{{ estado_imc }}</p>
+                    
+                    <h6>Grasa Corporal ({{ valoracion.grasa_corporal }}%)</h6>
+                    {% if valoracion.grasa_corporal < 20 %}
+                        <p class="text-warning">Nivel bajo de grasa corporal</p>
+                    {% elif valoracion.grasa_corporal < 30 %}
+                        <p class="text-success">Nivel saludable de grasa corporal</p>
+                    {% else %}
+                        <p class="text-danger">Nivel alto de grasa corporal</p>
+                    {% endif %}
+
+                    <h6>Agua Corporal ({{ valoracion.agua_corporal }}%)</h6>
+                    {% if valoracion.agua_corporal < 50 %}
+                        <p class="text-warning">Nivel bajo de agua corporal</p>
+                    {% elif valoracion.agua_corporal < 65 %}
+                        <p class="text-success">Nivel óptimo de agua corporal</p>
+                    {% else %}
+                        <p class="text-info">Nivel alto de agua corporal</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,49 +2,178 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Mi Información Personal</h2>
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Información Básica</h5>
-            <p><strong>Nombre:</strong> {{ info_usuario.Nombre }}</p>
-            <p><strong>Email:</strong> {{ info_usuario.Email }}</p>
-            <p><strong>Edad:</strong> {{ info_usuario.Edad }}</p>
-            <p><strong>Peso Actual:</strong> {{ info_usuario.PesoActual }} kg</p>
-            <p><strong>Altura:</strong> {{ info_usuario.AlturaActual }} m</p>
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Mi Información Personal</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'mycoach:agregar_valoracion' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nueva Medición
+            </a>
+            <a href="{% url 'mycoach:historial_valoraciones' %}" class="btn btn-secondary">
+                <i class="fas fa-history me-2"></i>Ver Historial Completo
+            </a>
         </div>
     </div>
 
-    <h2>Mis Valoraciones Personales</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Fecha de Valoración</th>
-                <th>Masa Corporal</th>
-                <th>Grasa Corporal</th>
-                <th>Agua Corporal</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for valoracion in valoraciones %}
-                <tr>
-                    <td>{{ valoracion.fecha_valoracion }}</td>
-                    <td>{{ valoracion.masa_corporal }}</td>
-                    <td>{{ valoracion.grasa_corporal }}</td>
-                    <td>{{ valoracion.agua_corporal }}</td>
-                    <td>
-                        <a href="{% url 'mycoach:editar_valoracion' valoracion.id %}" class="btn btn-sm btn-warning">Editar</a>
-                        <a href="{% url 'mycoach:ver_valoraciones' valoracion.id %}" class="btn btn-sm btn-info">Ver</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5">No tienes valoraciones personales registradas.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Información Básica Card -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title h5">Información Básica</h2>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Nombre:</dt>
+                        <dd class="col-sm-8 mb-2">{{ info_usuario.Nombre }}</dd>
+                        
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8 mb-2">{{ info_usuario.Email }}</dd>
+                        
+                        <dt class="col-sm-4">Edad:</dt>
+                        <dd class="col-sm-8 mb-2">{{ info_usuario.Edad }} años</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Peso Actual:</dt>
+                        <dd class="col-sm-8 mb-2">{{ info_usuario.PesoActual }} kg</dd>
+                        
+                        <dt class="col-sm-4">Altura:</dt>
+                        <dd class="col-sm-8 mb-2">{{ info_usuario.AlturaActual }} m</dd>
+                        
+                        {% if ultima_valoracion %}
+                        <dt class="col-sm-4">IMC Actual:</dt>
+                        <dd class="col-sm-8 mb-2">
+                            {{ ultima_valoracion.calcular_imc|floatformat:1 }}
+                            <span class="badge bg-secondary">{{ ultima_valoracion.get_estado_imc }}</span>
+                        </dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <a href="{% url 'mycoach:agregar_valoracion' %}" class="btn btn-primary mt-3">Agregar Valoración Personal</a>
+    <!-- Valoraciones Card -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0">Últimas Valoraciones</h2>
+                <div class="btn-group">
+                    <button type="button" 
+                            class="btn btn-sm btn-outline-secondary" 
+                            id="btnFiltroSemana">
+                        <i class="fas fa-calendar-week me-1"></i>Última Semana
+                    </button>
+                    <button type="button" 
+                            class="btn btn-sm btn-outline-secondary" 
+                            id="btnFiltroMes">
+                        <i class="fas fa-calendar-alt me-1"></i>Último Mes
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Fecha de Valoración</th>
+                            <th scope="col" class="text-end">Masa Corporal</th>
+                            <th scope="col" class="text-end">Grasa Corporal</th>
+                            <th scope="col" class="text-end">Agua Corporal</th>
+                            <th scope="col" class="text-end">IMC</th>
+                            <th scope="col" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for valoracion in valoraciones %}
+                            <tr>
+                                <td>{{ valoracion.fecha_valoracion|date:"d/m/Y" }}</td>
+                                <td class="text-end">{{ valoracion.masa_corporal }} kg</td>
+                                <td class="text-end">{{ valoracion.grasa_corporal }}%</td>
+                                <td class="text-end">{{ valoracion.agua_corporal }}%</td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a href="{% url 'mycoach:editar_valoracion' valoracion.id %}" 
+                                           class="btn btn-sm btn-warning"
+                                           title="Editar valoración">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'mycoach:ver_valoraciones' valoracion.id %}" 
+                                           class="btn btn-sm btn-info"
+                                           title="Ver detalles"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#quickViewModal">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-clipboard-list me-2"></i>
+                                        No tienes valoraciones personales registradas.
+                                    </p>
+                                    <a href="{% url 'mycoach:agregar_valoracion' %}" 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus me-1"></i>Agregar primera valoración
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Modal para Vista Rápida -->
+<div class="modal fade" 
+     id="quickViewModal" 
+     tabindex="-1" 
+     aria-labelledby="quickViewModalLabel" 
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title h5" id="quickViewModalLabel">Detalles de la Valoración</h3>
+                <button type="button" 
+                        class="btn-close" 
+                        data-bs-dismiss="modal" 
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- El contenido se cargará dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Activar el botón del filtro actual
+    const urlParams = new URLSearchParams(window.location.search);
+    const periodo = urlParams.get('periodo');
+    
+    if (periodo === 'semana') {
+        document.getElementById('btnFiltroSemana').classList.add('active');
+    } else if (periodo === 'mes') {
+        document.getElementById('btnFiltroMes').classList.add('active');
+    }
+
+    // Funcionalidad para los filtros
+    document.getElementById('btnFiltroSemana').addEventListener('click', function() {
+        window.location.href = "{% url 'mycoach:valoraciones' %}?periodo=semana";
+    });
+
+    document.getElementById('btnFiltroMes').addEventListener('click', function() {
+        window.location.href = "{% url 'mycoach:valoraciones' %}?periodo=mes";
+    });
+});
+</script>
 {% endblock %}
