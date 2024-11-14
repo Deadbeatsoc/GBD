@@ -2,11 +2,40 @@ from django import forms
 from rutinas.models import Rutina, EjercicioEnRutina, TipoRutina
 from datetime import timedelta
 
+class TipoRutinaModelForm(forms.ModelForm):
+    class Meta:
+        model = TipoRutina
+        fields = ['nombre_tipo', 'descripcion']
+        labels = {
+            'nombre_tipo': 'Nombre del tipo de rutina',
+            'descripcion': 'Descripción'
+        }
+        widgets = {
+            'nombre_tipo': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Cardio, Fuerza, Flexibilidad...'
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Describe el tipo de rutina...',
+                'rows': 4
+            })
+        }
+
+
+
 class RutinaForm(forms.ModelForm):
     duracion_estimada = forms.DurationField(
         help_text="Formato: HH:MM:SS",
         widget=forms.TextInput(attrs={'placeholder': '00:30:00'}),
         initial=timedelta(minutes=30)
+    )
+    
+    # Agregar explícitamente el campo tipo
+    tipo = forms.ModelChoiceField(
+        queryset=TipoRutina.objects.all().order_by('nombre_tipo'),
+        empty_label="Seleccione un tipo de rutina",
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     
     class Meta:
@@ -20,6 +49,10 @@ class RutinaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(RutinaForm, self).__init__(*args, **kwargs)
+        
+        # Asegurarse de que el queryset esté actualizado
+        self.fields['tipo'].queryset = TipoRutina.objects.all().order_by('nombre_tipo')
+        
         if user:
             self.instance.usuario_creador = user
 

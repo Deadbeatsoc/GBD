@@ -100,6 +100,7 @@
             <button class="btn btn-primary" onclick="showModal('addExistingRoutineModal')">Agregar Rutina Existente</button>
             <button class="btn btn-success" onclick="showModal('createRoutineModal')">Crear Nueva Rutina</button>
             <button class="btn btn-info" onclick="showModal('createExerciseModal')">Crear Ejercicio</button>
+            <button class="btn btn-warning" onclick="showModal('createRoutineTypeModal')">Crear Tipo de Rutina</button>
         </div>
 
         <!-- Tabla de rutinas -->
@@ -169,6 +170,32 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Agregar Rutina</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- En tu modal de crear tipo de rutina -->
+        <div id="createRoutineTypeModal" class="modal">
+            <div class="modal-content">
+             <span class="close" onclick="closeModal('createRoutineTypeModal')">&times;</span>
+                <h2>Crear Nuevo Tipo de Rutina</h2>
+                 <form action="{% url 'rutinas:crear_tipo_rutina' %}" method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="alert alert-danger">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-warning">Crear Tipo de Rutina</button>
+             </form>
             </div>
         </div>
 

@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db import transaction
 from .models import Rutina, EjercicioEnRutina, TipoRutina, Usuario
-from .forms import RutinaForm, EjercicioEnRutinaForm, RutinaExistenteForm
+from .forms import RutinaForm, EjercicioEnRutinaForm, RutinaExistenteForm, TipoRutinaModelForm
 
 
 def ver_rutinas(request):
@@ -75,6 +75,10 @@ def agregar_rutina_existente(request):
 @login_required
 def crear_rutina(request):
     """Vista para crear una nueva rutina."""
+    # Debug: Verificar tipos de rutina disponibles
+    tipos_disponibles = TipoRutina.objects.all()
+    print(f"Tipos de rutina disponibles: {list(tipos_disponibles)}")
+
     if request.method == 'POST':
         form = RutinaForm(request.POST, user=request.user)
         if form.is_valid():
@@ -82,11 +86,17 @@ def crear_rutina(request):
             messages.success(request, 'Rutina creada exitosamente.')
             return redirect('lista_rutinas')
         else:
+            print(f"Errores del formulario: {form.errors}")
             messages.error(request, 'Error al crear la rutina.')
     else:
         form = RutinaForm(user=request.user)
+
+    context = {
+        'form': form,
+        'tipos_rutina': tipos_disponibles,  # Pasar explícitamente los tipos
+    }
     
-    return render(request, 'crear_rutina.html', {'form': form})
+    return render(request, 'crear_rutina.html', context)
 
 @login_required
 def crear_ejercicio(request):
@@ -201,3 +211,21 @@ def actualizar_orden_ejercicios(request):
             return JsonResponse({'success': False, 'error': str(e)})
     
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+
+@login_required
+def crear_tipo_rutina(request):
+    if request.method == 'POST':
+        form = TipoRutinaModelForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tipo de rutina creado exitosamente.')
+            return redirect('rutinas:index')
+    else:
+        form = TipoRutinaModelForm()
+    
+    context = {
+        'form': form,
+        # Aquí puedes agregar más contexto si lo necesitas
+    }
+    return render(request, 'rutinas.html', context)

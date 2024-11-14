@@ -12,4 +12,6 @@ urlpatterns = [
     path('rutina/<int:rutina_id>/ejercicios/', views.ver_ejercicios_rutina, name='ver_ejercicios_rutina'),
     path('agregar-ejercicio-rutina/', views.agregar_ejercicio_rutina, name='agregar_ejercicio_rutina'),
     path('actualizar-orden-ejercicios/', views.actualizar_orden_ejercicios, name='actualizar_orden_ejercicios'),
+    path('crear-tipo-rutina/', views.crear_tipo_rutina, name='crear_tipo_rutina'),
+
 ]
